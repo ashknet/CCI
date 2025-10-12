@@ -1,0 +1,119 @@
+version: '3.8'
+
+services:
+  # SQL Server Database
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: medicalt ravel-sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong@Password123
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    networks:
+      - medicaltravel-network
+
+  # RabbitMQ Message Broker
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: medicaltravel-rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin123
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - medicaltravel-network
+
+  # Redis Cache
+  redis:
+    image: redis:alpine
+    container_name: medicaltravel-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - medicaltravel-network
+
+  # User Service
+  userservice:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: UserService
+    container_name: medicaltravel-userservice
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__UserDatabase=Server=sqlserver;Database=MedicalTravelUserDB;User Id=sa;Password=YourStrong@Password123;TrustServerCertificate=True;
+      - RabbitMQ__Host=rabbitmq
+    ports:
+      - "5001:80"
+    depends_on:
+      - sqlserver
+      - rabbitmq
+    networks:
+      - medicaltravel-network
+
+  # Provider Service
+  providerservice:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: ProviderService
+    container_name: medicaltravel-providerservice
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__ProviderDatabase=Server=sqlserver;Database=MedicalTravelProviderDB;User Id=sa;Password=YourStrong@Password123;TrustServerCertificate=True;
+      - RabbitMQ__Host=rabbitmq
+    ports:
+      - "5002:80"
+    depends_on:
+      - sqlserver
+      - rabbitmq
+    networks:
+      - medicaltravel-network
+
+  # API Gateway
+  apigateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: ApiGateway
+    container_name: medicaltravel-gateway
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5000:80"
+    depends_on:
+      - userservice
+      - providerservice
+    networks:
+      - medicaltravel-network
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./Frontend/medical-travel-app
+      dockerfile: Dockerfile
+    container_name: medicaltravel-frontend
+    environment:
+      - VITE_API_BASE_URL=http://localhost:5000/api
+    ports:
+      - "3000:80"
+    depends_on:
+      - apigateway
+    networks:
+      - medicaltravel-network
+
+networks:
+  medicaltravel-network:
+    driver: bridge
+
+volumes:
+  sqlserver-data:
