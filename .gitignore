@@ -1,0 +1,42 @@
+# Dotnet
+bin/
+obj/
+*.user
+*.suo
+*.psess
+*.vsp
+*.vspx
+*.vsps
+*.vspscc
+.vs/
+TestResults/
+*.nupkg
+.nuget/
+packages/
+
+# Rider / VS Code
+.idea/
+.vscode/
+*.DotSettings.user
+
+# Logs
+logs/
+*.log
+
+# Node
+node_modules/
+Web/node_modules/
+Web/dist/
+Web/.vite/
+Web/.next/
+
+# Azure Functions
+local.settings.json
+**/bin/
+**/obj/
+
+# Misc
+.env
+.env.*
+.DS_Store
+Thumbs.db

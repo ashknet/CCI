@@ -1,0 +1,115 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildingBlocks", "src/BuildingBlocks/BuildingBlocks.csproj", "{00000000-0000-0000-0000-000000000001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityService", "src/Services/IdentityService/IdentityService.csproj", "{00000000-0000-0000-0000-000000000010}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gateway", "src/Gateway/Gateway.csproj", "{00000000-0000-0000-0000-000000000020}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProviderService", "src/Services/ProviderService/ProviderService.csproj", "{00000000-0000-0000-0000-000000000030}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppointmentService", "src/Services/AppointmentService/AppointmentService.csproj", "{00000000-0000-0000-0000-000000000040}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchService", "src/Services/SearchService/SearchService.csproj", "{00000000-0000-0000-0000-000000000050}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransportService", "src/Services/TransportService/TransportService.csproj", "{00000000-0000-0000-0000-000000000060}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccommodationService", "src/Services/AccommodationService/AccommodationService.csproj", "{00000000-0000-0000-0000-000000000070}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChecklistService", "src/Services/ChecklistService/ChecklistService.csproj", "{00000000-0000-0000-0000-000000000080}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CostService", "src/Services/CostService/CostService.csproj", "{00000000-0000-0000-0000-000000000090}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationService", "src/Services/NotificationService/NotificationService.csproj", "{00000000-0000-0000-0000-0000000000A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessagingService", "src/Services/MessagingService/MessagingService.csproj", "{00000000-0000-0000-0000-0000000000B0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentService", "src/Services/PaymentService/PaymentService.csproj", "{00000000-0000-0000-0000-0000000000C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FollowupService", "src/Services/FollowupService/FollowupService.csproj", "{00000000-0000-0000-0000-0000000000D0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityFunctions", "src/Functions/IdentityFunctions/IdentityFunctions.csproj", "{00000000-0000-0000-0000-0000000000E0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppointmentFunctions", "src/Functions/AppointmentFunctions/AppointmentFunctions.csproj", "{00000000-0000-0000-0000-0000000000F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransportFunctions", "src/Functions/TransportFunctions/TransportFunctions.csproj", "{00000000-0000-0000-0000-000000000100}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{00000000-0000-0000-0000-000000000001}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00000000-0000-0000-0000-000000000001}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00000000-0000-0000-0000-000000000001}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00000000-0000-0000-0000-000000000001}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00000000-0000-0000-0000-000000000010}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00000000-0000-0000-0000-000000000010}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00000000-0000-0000-0000-000000000010}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00000000-0000-0000-0000-000000000010}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00000000-0000-0000-0000-000000000020}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00000000-0000-0000-0000-000000000020}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00000000-0000-0000-0000-000000000020}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00000000-0000-0000-0000-000000000020}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00000000-0000-0000-0000-000000000030}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00000000-0000-0000-0000-000000000030}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00000000-0000-0000-0000-000000000030}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00000000-0000-0000-0000-000000000030}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00000000-0000-0000-0000-000000000040}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00000000-0000-0000-0000-000000000040}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00000000-0000-0000-0000-000000000040}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00000000-0000-0000-0000-000000000040}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00000000-0000-0000-0000-000000000050}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00000000-0000-0000-0000-000000000050}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00000000-0000-0000-0000-000000000050}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00000000-0000-0000-0000-000000000050}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00000000-0000-0000-0000-000000000060}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00000000-0000-0000-0000-000000000060}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00000000-0000-0000-0000-000000000060}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00000000-0000-0000-0000-000000000060}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00000000-0000-0000-0000-000000000070}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00000000-0000-0000-0000-000000000070}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00000000-0000-0000-0000-000000000070}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00000000-0000-0000-0000-000000000070}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00000000-0000-0000-0000-000000000080}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00000000-0000-0000-0000-000000000080}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00000000-0000-0000-0000-000000000080}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00000000-0000-0000-0000-000000000080}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00000000-0000-0000-0000-000000000090}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00000000-0000-0000-0000-000000000090}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00000000-0000-0000-0000-000000000090}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00000000-0000-0000-0000-000000000090}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00000000-0000-0000-0000-0000000000A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00000000-0000-0000-0000-0000000000A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00000000-0000-0000-0000-0000000000A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00000000-0000-0000-0000-0000000000A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00000000-0000-0000-0000-0000000000B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00000000-0000-0000-0000-0000000000B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00000000-0000-0000-0000-0000000000B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00000000-0000-0000-0000-0000000000B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00000000-0000-0000-0000-0000000000C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00000000-0000-0000-0000-0000000000C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00000000-0000-0000-0000-0000000000C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00000000-0000-0000-0000-0000000000C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00000000-0000-0000-0000-0000000000D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00000000-0000-0000-0000-0000000000D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00000000-0000-0000-0000-0000000000D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00000000-0000-0000-0000-0000000000D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00000000-0000-0000-0000-0000000000E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00000000-0000-0000-0000-0000000000E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00000000-0000-0000-0000-0000000000E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00000000-0000-0000-0000-0000000000E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00000000-0000-0000-0000-0000000000F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00000000-0000-0000-0000-0000000000F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00000000-0000-0000-0000-0000000000F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00000000-0000-0000-0000-0000000000F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00000000-0000-0000-0000-000000000100}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00000000-0000-0000-0000-000000000100}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00000000-0000-0000-0000-000000000100}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00000000-0000-0000-0000-000000000100}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

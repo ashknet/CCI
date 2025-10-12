@@ -1,0 +1,44 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Core -->
+    <PackageVersion Include="Serilog.AspNetCore" Version="8.0.1" />
+    <PackageVersion Include="Serilog.Sinks.Console" Version="5.0.1" />
+    <PackageVersion Include="Serilog.Sinks.Seq" Version="5.2.2" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    <PackageVersion Include="MediatR" Version="12.2.0" />
+    <PackageVersion Include="FluentValidation" Version="11.9.0" />
+
+    <!-- EF Core / SQL Server -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0" />
+    <PackageVersion Include="Dapper" Version="2.1.35" />
+
+    <!-- Auth -->
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.0" />
+    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="7.6.0" />
+
+    <!-- Gateway -->
+    <PackageVersion Include="Yarp.ReverseProxy" Version="2.1.6" />
+
+    <!-- Messaging / Azure -->
+    <PackageVersion Include="MassTransit" Version="8.3.2" />
+    <PackageVersion Include="MassTransit.RabbitMQ" Version="8.3.2" />
+    <PackageVersion Include="Azure.Messaging.ServiceBus" Version="7.17.1" />
+
+    <!-- Azure Functions Isolated -->
+    <PackageVersion Include="Microsoft.Azure.Functions.Worker" Version="1.22.0" />
+    <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.3.0" />
+    <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.ServiceBus" Version="5.20.0" />
+    <PackageVersion Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.17.3" />
+
+    <!-- Testing -->
+    <PackageVersion Include="xunit" Version="2.9.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageVersion Include="FluentAssertions" Version="6.12.0" />
+
+  </ItemGroup>
+</Project>
