@@ -13,5 +13,6 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.MapPost("/payment/process", (decimal amount, string currency) => Results.Ok(new { status = "authorized", amount, currency }));
+app.MapPost("/payment/refund", (string paymentId, decimal amount) => Results.Ok(new { status = "refunded", paymentId, amount }));
 
 app.Run();

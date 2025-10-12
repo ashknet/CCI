@@ -1,6 +1,34 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Yarp.ReverseProxy;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// JWT for non-local enforcement
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "medtourism-local";
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "medtourism-clients";
+var jwtKey = builder.Configuration["Jwt:Key"] ?? "dev_super_secret_key_please_change";
+var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
+            IssuerSigningKey = signingKey
+        };
+    });
+builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Default", policy => policy.RequireAuthenticatedUser());
+});
 
 builder.Services.AddReverseProxy()
     .LoadFromMemory(new()
@@ -52,13 +80,15 @@ builder.Services.AddReverseProxy()
             {
                 ClusterId = "provider-cluster",
                 Match = new() { Path = "/providers/{**catch-all}" },
-                Transforms = { new Dictionary<string,string> { { "PathPattern", "/{**catch-all}" } } }
+                Transforms = { new Dictionary<string,string> { { "PathPattern", "/{**catch-all}" } } },
+                AuthorizationPolicy = "Default"
             },
             new("appointments-route")
             {
                 ClusterId = "appointment-cluster",
                 Match = new() { Path = "/appointments/{**catch-all}" },
-                Transforms = { new Dictionary<string,string> { { "PathPattern", "/{**catch-all}" } } }
+                Transforms = { new Dictionary<string,string> { { "PathPattern", "/{**catch-all}" } } },
+                AuthorizationPolicy = "Default"
             },
             new("search-route")
             {
@@ -95,7 +125,12 @@ builder.Services.AddReverseProxy()
 
 var app = builder.Build();
 
-// For local dev, disable auth; enable in non-Development with JWT validation in future
+// For local dev, disable auth; enable JWT in non-Development
+if (!app.Environment.IsDevelopment())
+{
+    app.UseAuthentication();
+    app.UseAuthorization();
+}
 app.MapReverseProxy();
 
 app.Run("http://0.0.0.0:8080");
