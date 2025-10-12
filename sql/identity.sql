@@ -54,6 +54,6 @@ GO
 -- seed
 INSERT INTO identity.Users(Email, PasswordHash, FullName, Phone, Country, City, Role)
 VALUES
-('patient@example.com', 'HASHED', 'John Patient', '+971500000000', 'UAE', 'Dubai', 'Patient'),
-('doctor@example.com', 'HASHED', 'Dr. Priya', '+919900000000', 'India', 'Hyderabad', 'Doctor'),
-('admin@example.com', 'HASHED', 'Site Admin', NULL, 'India', 'Bangalore', 'Admin');
+('patient@example.com', '$2a$11$H1XB4eXkJrXyF1T0Oq7C1OeZ2D6d8oZVJZs0o0qH6g9m1m1m1m1m.', 'John Patient', '+971500000000', 'UAE', 'Dubai', 'Patient'),
+('doctor@example.com', '$2a$11$H1XB4eXkJrXyF1T0Oq7C1OeZ2D6d8oZVJZs0o0qH6g9m1m1m1m1m.', 'Dr. Priya', '+919900000000', 'India', 'Hyderabad', 'Doctor'),
+('admin@example.com', '$2a$11$H1XB4eXkJrXyF1T0Oq7C1OeZ2D6d8oZVJZs0o0qH6g9m1m1m1m1m.', 'Site Admin', NULL, 'India', 'Bangalore', 'Admin');

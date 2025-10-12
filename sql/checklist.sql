@@ -15,6 +15,13 @@ CREATE TABLE checklist.Items (
 
 GO
 
+-- seed checklist
+INSERT INTO checklist.Diseases(Name) VALUES ('Knee Replacement'), ('Cardiac Bypass');
+DECLARE @knee BIGINT = SCOPE_IDENTITY();
+INSERT INTO checklist.Items(DiseaseId, Text, Phase) VALUES
+(@knee, 'Stop blood thinners 7 days prior', 'PreOp'),
+(@knee, 'Arrange physiotherapy for 2 weeks', 'PostOp');
+
 CREATE OR ALTER PROCEDURE checklist.sp_GetChecklist @DiseaseId BIGINT AS
 BEGIN
   SET NOCOUNT ON;

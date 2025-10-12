@@ -34,4 +34,15 @@ app.MapGet("/providers/search", async (HttpContext http) =>
     return Results.Ok(results);
 });
 
+app.MapGet("/providers/{doctorId:long}", async (long doctorId) =>
+{
+    await using var conn = new SqlConnection(app.Configuration.GetConnectionString("SqlServer") ?? "Server=localhost,1433;Database=master;User Id=sa;Password=Your_strong_password123!;TrustServerCertificate=True;");
+    var row = await conn.QuerySingleOrDefaultAsync(
+        sql: "provider.sp_GetDoctorProfile",
+        commandType: CommandType.StoredProcedure,
+        param: new { DoctorId = doctorId }
+    );
+    return row is null ? Results.NotFound() : Results.Ok(row);
+});
+
 app.Run();

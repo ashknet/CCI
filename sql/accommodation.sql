@@ -29,3 +29,10 @@ BEGIN
   ORDER BY PricePerNight ASC;
 END
 GO
+
+-- seed sample lodgings
+INSERT INTO accom.Lodgings(Name, City, NearHospitalId, Type, Address, PricePerNight, Amenities, Rating)
+VALUES
+('Hotel MedStay', 'Hyderabad', 1, 'Hotel', 'Near Apollo Hospitals', 3500, 'WiFi,Breakfast,AirportPickup', 4.3),
+('Fortis Residency', 'Bangalore', 2, 'Hotel', 'Opp. Fortis', 4200, 'WiFi,Breakfast', 4.1),
+('Lilavati Apartments', 'Mumbai', 3, 'Apartment', '5 min from Lilavati', 3000, 'Kitchen,WiFi', 4.2);

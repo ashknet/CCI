@@ -73,6 +73,16 @@ BEGIN
 END
 GO
 
+-- add sproc for doctor profile by id
+CREATE OR ALTER PROCEDURE provider.sp_GetDoctorProfile
+  @DoctorId BIGINT
+AS
+BEGIN
+  SET NOCOUNT ON;
+  SELECT * FROM provider.vDoctorProfiles WHERE DoctorId=@DoctorId;
+END
+GO
+
 -- seed
 INSERT INTO provider.Hospitals(Name, City, State, Country, Accreditation, Rating)
 VALUES

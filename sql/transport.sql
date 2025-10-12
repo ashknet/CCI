@@ -62,3 +62,17 @@ BEGIN
     ORDER BY b.Price ASC;
 END
 GO
+
+-- seed sample transport
+INSERT INTO transport.Airlines(Code, Name) VALUES ('6E','IndiGo'),('AI','Air India'),('EK','Emirates');
+DECLARE @base DATETIME2 = DATEADD(DAY, 5, SYSUTCDATETIME());
+INSERT INTO transport.Flights(AirlineId, FromCity, ToCity, DepartAtUtc, ArriveAtUtc, Price) VALUES
+(1,'Dubai','Hyderabad', DATEADD(HOUR, 6,@base), DATEADD(HOUR, 10,@base), 15000),
+(3,'Dubai','Hyderabad', DATEADD(HOUR, 8,@base), DATEADD(HOUR, 12,@base), 18000),
+(2,'Mumbai','Hyderabad', DATEADD(HOUR, 7,@base), DATEADD(HOUR, 9,@base), 8000);
+
+INSERT INTO transport.Trains(TrainNo, FromCity, ToCity, DepartAt, ArriveAt, Price) VALUES
+('12723','Mumbai','Hyderabad', DATEADD(HOUR, 5,@base), DATEADD(HOUR, 15,@base), 1200);
+
+INSERT INTO transport.Buses(Operator, FromCity, ToCity, DepartAt, ArriveAt, Price) VALUES
+('TSRTC','Vijayawada','Hyderabad', DATEADD(HOUR, 4,@base), DATEADD(HOUR, 8,@base), 600);

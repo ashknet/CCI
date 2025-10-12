@@ -95,6 +95,7 @@ builder.Services.AddReverseProxy()
 
 var app = builder.Build();
 
+// For local dev, disable auth; enable in non-Development with JWT validation in future
 app.MapReverseProxy();
 
 app.Run("http://0.0.0.0:8080");

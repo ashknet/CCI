@@ -46,4 +46,11 @@ app.MapPost("/appointments/book", async (long doctorId, long userId, DateTime st
     }
 });
 
+app.MapGet("/appointments/{userId:long}", async (long userId) =>
+{
+    await using var conn = new SqlConnection(app.Configuration.GetConnectionString("SqlServer") ?? "Server=localhost,1433;Database=master;User Id=sa;Password=Your_strong_password123!;TrustServerCertificate=True;");
+    var rows = await conn.QueryAsync("SELECT * FROM appt.Appointments WHERE UserId=@userId ORDER BY StartAtUtc DESC", new { userId });
+    return Results.Ok(rows);
+});
+
 app.Run();

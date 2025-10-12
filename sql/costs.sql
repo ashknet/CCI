@@ -11,6 +11,13 @@ CREATE TABLE costs.TreatmentCosts (
 
 GO
 
+-- seed treatment costs
+INSERT INTO costs.TreatmentCosts(Disease, MinCost, MaxCost, Currency)
+VALUES
+('Knee Replacement', 180000, 320000, 'INR'),
+('Cardiac Bypass', 250000, 450000, 'INR'),
+('Brain Tumor', 400000, 900000, 'INR');
+
 CREATE OR ALTER PROCEDURE costs.sp_Estimate
   @Disease NVARCHAR(256),
   @Travel DECIMAL(12,2),
