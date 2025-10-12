@@ -1,0 +1,183 @@
+version: "3.9"
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Your_strong_password123!
+    ports:
+      - "1433:1433"
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P 'Your_strong_password123!' -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  seq:
+    image: datalust/seq:2024.4
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - "5341:80"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  gateway:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.Gateway
+    depends_on:
+      - sqlserver
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Jwt__Issuer=medtourism-local
+      - Jwt__Audience=medtourism-clients
+      - Jwt__Key=dev_super_secret_key_please_change
+
+  web:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.Web
+    ports:
+      - "5173:80"
+    depends_on:
+      - gateway
+
+  identityservice:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.ServiceTemplate
+      args:
+        PROJECT: src/Services/IdentityService/IdentityService.csproj
+    environment:
+      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__SqlServer=Server=sqlserver;Database=master;User Id=sa;Password=Your_strong_password123!;TrustServerCertificate=True;
+      - Jwt__Issuer=medtourism-local
+      - Jwt__Audience=medtourism-clients
+      - Jwt__Key=dev_super_secret_key_please_change
+    ports:
+      - "8081:8080"
+    depends_on:
+      - sqlserver
+
+  providerservice:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.ServiceTemplate
+      args:
+        PROJECT: src/Services/ProviderService/ProviderService.csproj
+    environment:
+      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__SqlServer=Server=sqlserver;Database=master;User Id=sa;Password=Your_strong_password123!;TrustServerCertificate=True;
+    ports:
+      - "8082:8080"
+    depends_on:
+      - sqlserver
+
+  appointmentservice:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.ServiceTemplate
+      args:
+        PROJECT: src/Services/AppointmentService/AppointmentService.csproj
+    environment:
+      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__SqlServer=Server=sqlserver;Database=master;User Id=sa;Password=Your_strong_password123!;TrustServerCertificate=True;
+    ports:
+      - "8083:8080"
+    depends_on:
+      - sqlserver
+
+  searchservice:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.ServiceTemplate
+      args:
+        PROJECT: src/Services/SearchService/SearchService.csproj
+    environment:
+      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Services__ProviderService=http://providerservice:8080
+    ports:
+      - "8084:8080"
+    depends_on:
+      - providerservice
+
+  transportservice:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.ServiceTemplate
+    args:
+      PROJECT: src/Services/TransportService/TransportService.csproj
+    environment:
+      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__SqlServer=Server=sqlserver;Database=master;User Id=sa;Password=Your_strong_password123!;TrustServerCertificate=True;
+    ports:
+      - "8085:8080"
+    depends_on:
+      - sqlserver
+
+  accommodationservice:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.ServiceTemplate
+    args:
+      PROJECT: src/Services/AccommodationService/AccommodationService.csproj
+    environment:
+      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__SqlServer=Server=sqlserver;Database=master;User Id=sa;Password=Your_strong_password123!;TrustServerCertificate=True;
+    ports:
+      - "8086:8080"
+    depends_on:
+      - sqlserver
+
+  checklistservice:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.ServiceTemplate
+    args:
+      PROJECT: src/Services/ChecklistService/ChecklistService.csproj
+    environment:
+      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__SqlServer=Server=sqlserver;Database=master;User Id=sa;Password=Your_strong_password123!;TrustServerCertificate=True;
+    ports:
+      - "8087:8080"
+    depends_on:
+      - sqlserver
+
+  costservice:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.ServiceTemplate
+    args:
+      PROJECT: src/Services/CostService/CostService.csproj
+    environment:
+      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__SqlServer=Server=sqlserver;Database=master;User Id=sa;Password=Your_strong_password123!;TrustServerCertificate=True;
+    ports:
+      - "8088:8080"
+    depends_on:
+      - sqlserver

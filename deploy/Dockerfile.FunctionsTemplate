@@ -1,0 +1,15 @@
+# syntax=docker/dockerfile:1
+ARG PROJECT
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
+WORKDIR /home/site/wwwroot
+
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+ARG PROJECT
+WORKDIR /src
+COPY . .
+RUN dotnet restore MedTourism.sln
+RUN dotnet publish ${PROJECT} -c Release -o /out
+
+FROM mcr.microsoft.com/azure-functions/dotnet-isolated:4-dotnet-isolated9.0
+WORKDIR /home/site/wwwroot
+COPY --from=build /out .
