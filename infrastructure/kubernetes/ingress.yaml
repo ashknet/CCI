@@ -1,0 +1,65 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: medtravel-ingress
+  namespace: medtravel
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - medtravel.com
+    - api.medtravel.com
+    secretName: medtravel-tls
+  rules:
+  - host: medtravel.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 80
+  - host: api.medtravel.com
+    http:
+      paths:
+      - path: /api/auth
+        pathType: Prefix
+        backend:
+          service:
+            name: user-management-service
+            port:
+              number: 80
+      - path: /api/search
+        pathType: Prefix
+        backend:
+          service:
+            name: hospital-service
+            port:
+              number: 80
+      - path: /api/appointments
+        pathType: Prefix
+        backend:
+          service:
+            name: hospital-service
+            port:
+              number: 80
+      - path: /api/transport
+        pathType: Prefix
+        backend:
+          service:
+            name: transportation-service
+            port:
+              number: 80
+      - path: /api/messages
+        pathType: Prefix
+        backend:
+          service:
+            name: messaging-service
+            port:
+              number: 80
