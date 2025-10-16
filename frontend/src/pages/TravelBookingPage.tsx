@@ -11,7 +11,6 @@ const TravelBookingPage = () => {
   const [preference, setPreference] = useState('cheapest')
   const [results, setResults] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
-  const [selectedFlight, setSelectedFlight] = useState<any>(null)
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()

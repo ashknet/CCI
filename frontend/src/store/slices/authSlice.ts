@@ -6,9 +6,13 @@ interface User {
   email: string
   firstName: string
   lastName: string
+  phone?: string
   role: string
   country: string
   city: string
+  emailVerified?: boolean
+  phoneVerified?: boolean
+  createdAt?: string
 }
 
 interface AuthState {
