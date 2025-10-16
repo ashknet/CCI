@@ -8,6 +8,8 @@
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="8.0.10" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
     <PackageVersion Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
     
     <!-- Microsoft Entity Framework Core -->
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
@@ -50,5 +52,11 @@
     <!-- Other -->
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="AspNetCoreRateLimit" Version="5.0.0" />
+    
+    <!-- MedTravel Shared NuGet Packages -->
+    <PackageVersion Include="MedTravel.Shared" Version="1.0.0" />
+    <PackageVersion Include="MedTravel.Shared.Auth" Version="1.0.0" />
+    <PackageVersion Include="MedTravel.Shared.Logging" Version="1.0.0" />
+    <PackageVersion Include="MedTravel.Shared.Validation" Version="1.0.0" />
   </ItemGroup>
 </Project>

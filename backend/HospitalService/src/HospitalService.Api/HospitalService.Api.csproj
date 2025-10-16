@@ -5,10 +5,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.10" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" />
+    <PackageReference Include="Swashbuckle.AspNetCore" />
   </ItemGroup>
   <ItemGroup>
     <!-- Internal Project References (same service) -->
@@ -18,9 +18,9 @@
   
   <ItemGroup>
     <!-- Shared NuGet Packages (enables independent deployment) -->
-    <PackageReference Include="MedTravel.Shared" Version="1.0.0" />
-    <PackageReference Include="MedTravel.Shared.Auth" Version="1.0.0" />
-    <PackageReference Include="MedTravel.Shared.Logging" Version="1.0.0" />
-    <PackageReference Include="MedTravel.Shared.Validation" Version="1.0.0" />
+    <PackageReference Include="MedTravel.Shared" />
+    <PackageReference Include="MedTravel.Shared.Auth" />
+    <PackageReference Include="MedTravel.Shared.Logging" />
+    <PackageReference Include="MedTravel.Shared.Validation" />
   </ItemGroup>
 </Project>

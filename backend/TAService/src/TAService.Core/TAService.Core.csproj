@@ -5,6 +5,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Shared\MedTravel.Shared\MedTravel.Shared.csproj" />
+    <PackageReference Include="MedTravel.Shared" />
   </ItemGroup>
 </Project>
