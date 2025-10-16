@@ -11,11 +11,16 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
   </ItemGroup>
   <ItemGroup>
+    <!-- Internal Project References (same service) -->
     <ProjectReference Include="..\HospitalService.Core\HospitalService.Core.csproj" />
     <ProjectReference Include="..\HospitalService.Infrastructure\HospitalService.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\..\..\Shared\MedTravel.Shared\MedTravel.Shared.csproj" />
-    <ProjectReference Include="..\..\..\..\Shared\MedTravel.Shared.Auth\MedTravel.Shared.Auth.csproj" />
-    <ProjectReference Include="..\..\..\..\Shared\MedTravel.Shared.Logging\MedTravel.Shared.Logging.csproj" />
-    <ProjectReference Include="..\..\..\..\Shared\MedTravel.Shared.Validation\MedTravel.Shared.Validation.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <!-- Shared NuGet Packages (enables independent deployment) -->
+    <PackageReference Include="MedTravel.Shared" Version="1.0.0" />
+    <PackageReference Include="MedTravel.Shared.Auth" Version="1.0.0" />
+    <PackageReference Include="MedTravel.Shared.Logging" Version="1.0.0" />
+    <PackageReference Include="MedTravel.Shared.Validation" Version="1.0.0" />
   </ItemGroup>
 </Project>

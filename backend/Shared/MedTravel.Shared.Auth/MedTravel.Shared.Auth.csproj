@@ -4,6 +4,18 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    
+    <!-- NuGet Package Configuration -->
+    <IsPackable>true</IsPackable>
+    <PackageId>MedTravel.Shared.Auth</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>MedTravel Team</Authors>
+    <Company>MedTravel</Company>
+    <Description>Authentication and authorization utilities for MedTravel microservices</Description>
+    <PackageTags>medtravel;auth;jwt;microservices</PackageTags>
+    <RepositoryUrl>https://github.com/your-org/medtravel</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MedTravel.Shared\MedTravel.Shared.csproj" />
+    <PackageReference Include="MedTravel.Shared" Version="1.0.0" />
   </ItemGroup>
 
 </Project>

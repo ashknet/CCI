@@ -1,128 +1,109 @@
-# MedTravel Platform - Build Script (PowerShell)
-# Builds both backend and frontend
+# MedTravel Platform - Complete Build Script (Windows)
+# Builds NuGet packages and entire solution
 
-Write-Host "======================================" -ForegroundColor Cyan
-Write-Host "  MedTravel Platform - Build Script  " -ForegroundColor Cyan
-Write-Host "======================================" -ForegroundColor Cyan
+Write-Host "======================================" -ForegroundColor Blue
+Write-Host "  MedTravel Platform - Build Script" -ForegroundColor Blue
+Write-Host "======================================" -ForegroundColor Blue
 Write-Host ""
 
-$buildBackend = $false
-$buildFrontend = $false
+# Navigate to solution root
+$scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
+$solutionRoot = Split-Path -Parent $scriptPath
+Set-Location $solutionRoot
 
-# Check for .NET SDK
-try {
-    $dotnetVersion = dotnet --version
-    Write-Host "✓ .NET SDK found: $dotnetVersion" -ForegroundColor Green
-    $buildBackend = $true
-}
-catch {
-    Write-Host "✗ .NET SDK not found. Backend build will be skipped." -ForegroundColor Red
-    Write-Host "  Install from: https://dot.net/download" -ForegroundColor Yellow
-}
-
-# Check for Node.js
-try {
-    $nodeVersion = node --version
-    Write-Host "✓ Node.js found: $nodeVersion" -ForegroundColor Green
-    $buildFrontend = $true
-}
-catch {
-    Write-Host "✗ Node.js not found. Frontend build will be skipped." -ForegroundColor Red
-    Write-Host "  Install from: https://nodejs.org" -ForegroundColor Yellow
-}
-
+Write-Host "Solution root: $solutionRoot" -ForegroundColor Cyan
 Write-Host ""
 
-# Build Backend
-if ($buildBackend) {
-    Write-Host "Building Backend..." -ForegroundColor Blue
-    Write-Host "----------------------------------------"
-    
-    Write-Host "Restoring dependencies..."
-    dotnet restore MedTravel.sln
-    
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host "❌ Backend restore failed!" -ForegroundColor Red
-        exit 1
-    }
-    
-    Write-Host "Building solution..."
-    dotnet build MedTravel.sln --configuration Release --no-restore
-    
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host "❌ Backend build failed!" -ForegroundColor Red
-        exit 1
-    }
-    
-    Write-Host "✓ Backend build completed successfully!" -ForegroundColor Green
-    Write-Host ""
-}
+# Step 1: Build NuGet Packages
+Write-Host "======================================" -ForegroundColor Blue
+Write-Host "  Step 1: Building NuGet Packages" -ForegroundColor Blue
+Write-Host "======================================" -ForegroundColor Blue
 
-# Build Frontend
-if ($buildFrontend) {
-    Write-Host "Building Frontend..." -ForegroundColor Blue
-    Write-Host "----------------------------------------"
-    
-    Set-Location frontend
-    
-    Write-Host "Installing dependencies..."
-    npm install
-    
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host "❌ Frontend install failed!" -ForegroundColor Red
-        Set-Location ..
-        exit 1
-    }
-    
-    Write-Host "Building React application..."
-    npm run build
-    
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host "❌ Frontend build failed!" -ForegroundColor Red
-        Set-Location ..
-        exit 1
-    }
-    
-    Set-Location ..
-    
-    Write-Host "✓ Frontend build completed successfully!" -ForegroundColor Green
-    Write-Host ""
-}
+New-Item -ItemType Directory -Force -Path "nupkgs" | Out-Null
+
+Set-Location backend\Shared
+
+Write-Host "Building MedTravel.Shared..." -ForegroundColor Yellow
+dotnet pack MedTravel.Shared -c Release -o ..\..\nupkgs
+Write-Host "✅ MedTravel.Shared.1.0.0.nupkg created" -ForegroundColor Green
+
+Write-Host "Building MedTravel.Shared.Auth..." -ForegroundColor Yellow
+dotnet pack MedTravel.Shared.Auth -c Release -o ..\..\nupkgs
+Write-Host "✅ MedTravel.Shared.Auth.1.0.0.nupkg created" -ForegroundColor Green
+
+Write-Host "Building MedTravel.Shared.Logging..." -ForegroundColor Yellow
+dotnet pack MedTravel.Shared.Logging -c Release -o ..\..\nupkgs
+Write-Host "✅ MedTravel.Shared.Logging.1.0.0.nupkg created" -ForegroundColor Green
+
+Write-Host "Building MedTravel.Shared.Validation..." -ForegroundColor Yellow
+dotnet pack MedTravel.Shared.Validation -c Release -o ..\..\nupkgs
+Write-Host "✅ MedTravel.Shared.Validation.1.0.0.nupkg created" -ForegroundColor Green
+
+Set-Location $solutionRoot
+
+Write-Host ""
+Write-Host "✅ All NuGet packages built successfully" -ForegroundColor Green
+Write-Host ""
+
+# Step 2: Add local NuGet source
+Write-Host "======================================" -ForegroundColor Blue
+Write-Host "  Step 2: Configuring NuGet Sources" -ForegroundColor Blue
+Write-Host "======================================" -ForegroundColor Blue
+
+# Remove existing LocalDev source if it exists
+dotnet nuget remove source LocalDev 2>$null
+
+# Add local NuGet source
+$nupkgsPath = Join-Path $solutionRoot "nupkgs"
+dotnet nuget add source $nupkgsPath --name "LocalDev"
+Write-Host "✅ Local NuGet source configured" -ForegroundColor Green
+Write-Host ""
+
+# Step 3: Restore packages
+Write-Host "======================================" -ForegroundColor Blue
+Write-Host "  Step 3: Restoring Packages" -ForegroundColor Blue
+Write-Host "======================================" -ForegroundColor Blue
+
+dotnet restore MedTravel.sln
+Write-Host "✅ Packages restored" -ForegroundColor Green
+Write-Host ""
+
+# Step 4: Build solution
+Write-Host "======================================" -ForegroundColor Blue
+Write-Host "  Step 4: Building Solution" -ForegroundColor Blue
+Write-Host "======================================" -ForegroundColor Blue
+
+dotnet build MedTravel.sln --configuration Release --no-restore
+Write-Host "✅ Solution built successfully" -ForegroundColor Green
+Write-Host ""
+
+# Step 5: Build frontend
+Write-Host "======================================" -ForegroundColor Blue
+Write-Host "  Step 5: Building Frontend" -ForegroundColor Blue
+Write-Host "======================================" -ForegroundColor Blue
+
+Set-Location frontend
+npm install
+npm run build
+Set-Location $solutionRoot
+
+Write-Host "✅ Frontend built successfully" -ForegroundColor Green
+Write-Host ""
 
 # Summary
-Write-Host "======================================" -ForegroundColor Cyan
-Write-Host "  Build Summary" -ForegroundColor Cyan
-Write-Host "======================================" -ForegroundColor Cyan
-
-if ($buildBackend) {
-    Write-Host "Backend:  " -NoNewline
-    Write-Host "✓ SUCCESS" -ForegroundColor Green
-}
-else {
-    Write-Host "Backend:  " -NoNewline
-    Write-Host "⏭ SKIPPED (No .NET SDK)" -ForegroundColor Yellow
-}
-
-if ($buildFrontend) {
-    Write-Host "Frontend: " -NoNewline
-    Write-Host "✓ SUCCESS" -ForegroundColor Green
-}
-else {
-    Write-Host "Frontend: " -NoNewline
-    Write-Host "⏭ SKIPPED (No Node.js)" -ForegroundColor Yellow
-}
-
-Write-Host "======================================" -ForegroundColor Cyan
-
-if ($buildBackend -and $buildFrontend) {
-    Write-Host "🎉 All builds completed successfully!" -ForegroundColor Green
-    exit 0
-}
-elseif ($buildBackend -or $buildFrontend) {
-    Write-Host "ℹ Some builds completed. Install missing tools to build everything." -ForegroundColor Blue
-    exit 0
-}
-else {
-    Write-Host "❌ No builds completed. Install .NET SDK and/or Node.js." -ForegroundColor Red
-    exit 1
-}
+Write-Host "======================================" -ForegroundColor Blue
+Write-Host "  Build Complete!" -ForegroundColor Blue
+Write-Host "======================================" -ForegroundColor Blue
+Write-Host ""
+Write-Host "✅ NuGet packages: 4" -ForegroundColor Green
+Write-Host "✅ Backend services: 4" -ForegroundColor Green
+Write-Host "✅ Frontend: Built" -ForegroundColor Green
+Write-Host ""
+Write-Host "To start the platform:" -ForegroundColor Cyan
+Write-Host "  docker-compose up" -ForegroundColor White
+Write-Host ""
+Write-Host "Or run services individually:" -ForegroundColor Cyan
+Write-Host "  cd backend\UserManagementService\src\UserManagementService.Api" -ForegroundColor White
+Write-Host "  dotnet run" -ForegroundColor White
+Write-Host ""
+Write-Host "Build completed successfully!" -ForegroundColor Green

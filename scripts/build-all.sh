@@ -1,99 +1,115 @@
 #!/bin/bash
-set -e
+
+# MedTravel Platform - Complete Build Script
+# Builds NuGet packages and entire solution
+
+set -e  # Exit on error
 
 echo "======================================"
-echo "  MedTravel Platform - Build Script  "
+echo "  MedTravel Platform - Build Script"
 echo "======================================"
 echo ""
 
-# Colors
+# Colors for output
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
-RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-# Check for .NET SDK
-if command -v dotnet &> /dev/null; then
-    DOTNET_VERSION=$(dotnet --version)
-    echo -e "${GREEN}✓${NC} .NET SDK found: $DOTNET_VERSION"
-    BUILD_BACKEND=true
-else
-    echo -e "${RED}✗${NC} .NET SDK not found. Backend build will be skipped."
-    echo "  Install from: https://dot.net/download"
-    BUILD_BACKEND=false
-fi
+# Navigate to solution root
+cd "$(dirname "$0")/.."
+SOLUTION_ROOT=$(pwd)
 
-# Check for Node.js
-if command -v node &> /dev/null; then
-    NODE_VERSION=$(node --version)
-    echo -e "${GREEN}✓${NC} Node.js found: $NODE_VERSION"
-    BUILD_FRONTEND=true
-else
-    echo -e "${RED}✗${NC} Node.js not found. Frontend build will be skipped."
-    echo "  Install from: https://nodejs.org"
-    BUILD_FRONTEND=false
-fi
-
+echo -e "${BLUE}Solution root: ${SOLUTION_ROOT}${NC}"
 echo ""
 
-# Build Backend
-if [ "$BUILD_BACKEND" = true ]; then
-    echo -e "${BLUE}Building Backend...${NC}"
-    echo "----------------------------------------"
-    
-    echo "Restoring dependencies..."
-    dotnet restore MedTravel.sln
-    
-    echo "Building solution..."
-    dotnet build MedTravel.sln --configuration Release --no-restore
-    
-    echo -e "${GREEN}✓ Backend build completed successfully!${NC}"
-    echo ""
-fi
+# Step 1: Build NuGet Packages
+echo "======================================"
+echo "  Step 1: Building NuGet Packages"
+echo "======================================"
 
-# Build Frontend
-if [ "$BUILD_FRONTEND" = true ]; then
-    echo -e "${BLUE}Building Frontend...${NC}"
-    echo "----------------------------------------"
-    
-    cd frontend
-    
-    echo "Installing dependencies..."
-    npm install
-    
-    echo "Building React application..."
-    npm run build
-    
-    cd ..
-    
-    echo -e "${GREEN}✓ Frontend build completed successfully!${NC}"
-    echo ""
-fi
+mkdir -p nupkgs
+
+cd backend/Shared
+
+echo "Building MedTravel.Shared..."
+dotnet pack MedTravel.Shared -c Release -o ../../nupkgs
+echo -e "${GREEN}✅ MedTravel.Shared.1.0.0.nupkg created${NC}"
+
+echo "Building MedTravel.Shared.Auth..."
+dotnet pack MedTravel.Shared.Auth -c Release -o ../../nupkgs
+echo -e "${GREEN}✅ MedTravel.Shared.Auth.1.0.0.nupkg created${NC}"
+
+echo "Building MedTravel.Shared.Logging..."
+dotnet pack MedTravel.Shared.Logging -c Release -o ../../nupkgs
+echo -e "${GREEN}✅ MedTravel.Shared.Logging.1.0.0.nupkg created${NC}"
+
+echo "Building MedTravel.Shared.Validation..."
+dotnet pack MedTravel.Shared.Validation -c Release -o ../../nupkgs
+echo -e "${GREEN}✅ MedTravel.Shared.Validation.1.0.0.nupkg created${NC}"
+
+cd ../..
+
+echo ""
+echo -e "${GREEN}✅ All NuGet packages built successfully${NC}"
+echo ""
+
+# Step 2: Add local NuGet source
+echo "======================================"
+echo "  Step 2: Configuring NuGet Sources"
+echo "======================================"
+
+# Remove existing LocalDev source if it exists
+dotnet nuget remove source LocalDev 2>/dev/null || true
+
+# Add local NuGet source
+dotnet nuget add source "${SOLUTION_ROOT}/nupkgs" --name "LocalDev"
+echo -e "${GREEN}✅ Local NuGet source configured${NC}"
+echo ""
+
+# Step 3: Restore packages
+echo "======================================"
+echo "  Step 3: Restoring Packages"
+echo "======================================"
+
+dotnet restore MedTravel.sln
+echo -e "${GREEN}✅ Packages restored${NC}"
+echo ""
+
+# Step 4: Build solution
+echo "======================================"
+echo "  Step 4: Building Solution"
+echo "======================================"
+
+dotnet build MedTravel.sln --configuration Release --no-restore
+echo -e "${GREEN}✅ Solution built successfully${NC}"
+echo ""
+
+# Step 5: Build frontend
+echo "======================================"
+echo "  Step 5: Building Frontend"
+echo "======================================"
+
+cd frontend
+npm install
+npm run build
+cd ..
+
+echo -e "${GREEN}✅ Frontend built successfully${NC}"
+echo ""
 
 # Summary
 echo "======================================"
-echo "  Build Summary"
+echo "  Build Complete!"
 echo "======================================"
-if [ "$BUILD_BACKEND" = true ]; then
-    echo -e "Backend:  ${GREEN}✓ SUCCESS${NC}"
-else
-    echo -e "Backend:  ${RED}⏭ SKIPPED${NC} (No .NET SDK)"
-fi
-
-if [ "$BUILD_FRONTEND" = true ]; then
-    echo -e "Frontend: ${GREEN}✓ SUCCESS${NC}"
-else
-    echo -e "Frontend: ${RED}⏭ SKIPPED${NC} (No Node.js)"
-fi
-echo "======================================"
-
-if [ "$BUILD_BACKEND" = true ] && [ "$BUILD_FRONTEND" = true ]; then
-    echo -e "${GREEN}🎉 All builds completed successfully!${NC}"
-    exit 0
-elif [ "$BUILD_BACKEND" = true ] || [ "$BUILD_FRONTEND" = true ]; then
-    echo -e "${BLUE}ℹ Some builds completed. Install missing tools to build everything.${NC}"
-    exit 0
-else
-    echo -e "${RED}❌ No builds completed. Install .NET SDK and/or Node.js.${NC}"
-    exit 1
-fi
+echo ""
+echo -e "${GREEN}✅ NuGet packages: 4${NC}"
+echo -e "${GREEN}✅ Backend services: 4${NC}"
+echo -e "${GREEN}✅ Frontend: Built${NC}"
+echo ""
+echo "To start the platform:"
+echo "  docker-compose up"
+echo ""
+echo "Or run services individually:"
+echo "  cd backend/UserManagementService/src/UserManagementService.Api && dotnet run"
+echo ""
+echo -e "${GREEN}Build completed successfully!${NC}"

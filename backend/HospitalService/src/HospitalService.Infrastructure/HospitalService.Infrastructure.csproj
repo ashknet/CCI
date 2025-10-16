@@ -13,7 +13,12 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <!-- Internal Project Reference (same service) -->
     <ProjectReference Include="..\HospitalService.Core\HospitalService.Core.csproj" />
-    <ProjectReference Include="..\..\..\..\Shared\MedTravel.Shared\MedTravel.Shared.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <!-- Shared NuGet Package (enables independent deployment) -->
+    <PackageReference Include="MedTravel.Shared" Version="1.0.0" />
   </ItemGroup>
 </Project>
