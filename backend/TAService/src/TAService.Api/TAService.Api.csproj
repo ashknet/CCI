@@ -12,7 +12,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TransportationAccommodationService.Core\TransportationAccommodationService.Core.csproj" />
+    <ProjectReference Include="..\TAService.Core\TAService.Core.csproj" />
+    <ProjectReference Include="..\TAService.Infrastructure\TAService.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\..\Shared\MedTravel.Shared\MedTravel.Shared.csproj" />
     <ProjectReference Include="..\..\..\..\Shared\MedTravel.Shared.Auth\MedTravel.Shared.Auth.csproj" />
     <ProjectReference Include="..\..\..\..\Shared\MedTravel.Shared.Logging\MedTravel.Shared.Logging.csproj" />

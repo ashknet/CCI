@@ -34,14 +34,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HospitalService.Functions", "backend\HospitalService\src\HospitalService.Functions\HospitalService.Functions.csproj", "{30000000-0000-0000-0000-000000000004}"
 EndProject
 
-# Transportation & Accommodation Service
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransportationAccommodationService.Api", "backend\TransportationAccommodationService\src\TransportationAccommodationService.Api\TransportationAccommodationService.Api.csproj", "{40000000-0000-0000-0000-000000000001}"
+# TAService (Transportation & Accommodation)
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TAService.Api", "backend\TAService\src\TAService.Api\TAService.Api.csproj", "{40000000-0000-0000-0000-000000000001}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransportationAccommodationService.Core", "backend\TransportationAccommodationService\src\TransportationAccommodationService.Core\TransportationAccommodationService.Core.csproj", "{40000000-0000-0000-0000-000000000002}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TAService.Core", "backend\TAService\src\TAService.Core\TAService.Core.csproj", "{40000000-0000-0000-0000-000000000002}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransportationAccommodationService.Infrastructure", "backend\TransportationAccommodationService\src\TransportationAccommodationService.Infrastructure\TransportationAccommodationService.Infrastructure.csproj", "{40000000-0000-0000-0000-000000000003}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TAService.Infrastructure", "backend\TAService\src\TAService.Infrastructure\TAService.Infrastructure.csproj", "{40000000-0000-0000-0000-000000000003}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransportationAccommodationService.Functions", "backend\TransportationAccommodationService\src\TransportationAccommodationService.Functions\TransportationAccommodationService.Functions.csproj", "{40000000-0000-0000-0000-000000000004}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TAService.Functions", "backend\TAService\src\TAService.Functions\TAService.Functions.csproj", "{40000000-0000-0000-0000-000000000004}"
 EndProject
 
 # Messaging Service

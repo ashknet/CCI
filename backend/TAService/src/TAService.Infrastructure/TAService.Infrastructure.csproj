@@ -13,7 +13,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TransportationAccommodationService.Core\TransportationAccommodationService.Core.csproj" />
+    <ProjectReference Include="..\TAService.Core\TAService.Core.csproj" />
     <ProjectReference Include="..\..\..\..\Shared\MedTravel.Shared\MedTravel.Shared.csproj" />
   </ItemGroup>
 </Project>

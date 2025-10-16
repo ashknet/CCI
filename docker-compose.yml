@@ -54,16 +54,20 @@ services:
     networks:
       - medtravel-network
 
-  transportation-service:
+  taservice:
     build:
       context: .
-      dockerfile: backend/TransportationAccommodationService/src/TransportationAccommodationService.Api/Dockerfile
-    container_name: medtravel-transportation-service
+      dockerfile: backend/TAService/src/TAService.Api/Dockerfile
+    container_name: medtravel-taservice
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=TAServiceDb;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;MultipleActiveResultSets=true
     ports:
       - "5003:80"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
     networks:
       - medtravel-network
 
@@ -88,14 +92,14 @@ services:
     environment:
       - REACT_APP_USER_SERVICE_URL=http://localhost:5001
       - REACT_APP_HOSPITAL_SERVICE_URL=http://localhost:5002
-      - REACT_APP_TRANSPORT_SERVICE_URL=http://localhost:5003
+      - REACT_APP_TASERVICE_URL=http://localhost:5003
       - REACT_APP_MESSAGING_SERVICE_URL=http://localhost:5004
     ports:
       - "3000:80"
     depends_on:
       - user-management-service
       - hospital-service
-      - transportation-service
+      - taservice
       - messaging-service
     networks:
       - medtravel-network
