@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" />
+    <PackageReference Include="Swashbuckle.AspNetCore" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Internal Project References (same service) -->
+    <ProjectReference Include="..\HospitalService.Core\HospitalService.Core.csproj" />
+    <ProjectReference Include="..\HospitalService.Infrastructure\HospitalService.Infrastructure.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <!-- Shared NuGet Packages (enables independent deployment) -->
+    <PackageReference Include="MedTravel.Shared" />
+    <PackageReference Include="MedTravel.Shared.Auth" />
+    <PackageReference Include="MedTravel.Shared.Logging" />
+    <PackageReference Include="MedTravel.Shared.Validation" />
+  </ItemGroup>
+</Project>

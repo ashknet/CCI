@@ -1,0 +1,19 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Centralized Package Versions -->
+    <MicrosoftAspNetCoreVersion>8.0.10</MicrosoftAspNetCoreVersion>
+    <MicrosoftEntityFrameworkCoreVersion>8.0.10</MicrosoftEntityFrameworkCoreVersion>
+    <MicrosoftExtensionsVersion>8.0.1</MicrosoftExtensionsVersion>
+    <MicrosoftAzureFunctionsVersion>1.22.0</MicrosoftAzureFunctionsVersion>
+    <SerilogVersion>4.1.0</SerilogVersion>
+    <FluentValidationVersion>11.10.0</FluentValidationVersion>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Swashbuckle.AspNetCore" />
+    <PackageReference Include="AspNetCoreRateLimit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Internal Project References (same service) -->
+    <ProjectReference Include="..\UserManagementService.Core\UserManagementService.Core.csproj" />
+    <ProjectReference Include="..\UserManagementService.Infrastructure\UserManagementService.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Shared NuGet Packages (enables independent deployment) -->
+    <PackageReference Include="MedTravel.Shared" />
+    <PackageReference Include="MedTravel.Shared.Auth" />
+    <PackageReference Include="MedTravel.Shared.Logging" />
+    <PackageReference Include="MedTravel.Shared.Validation" />
+  </ItemGroup>
+
+</Project>
