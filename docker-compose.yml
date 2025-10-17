@@ -1,0 +1,113 @@
+version: '3.8'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: medtravel-sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong@Passw0rd
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd -Q "SELECT 1"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - medtravel-network
+
+  user-management-service:
+    build:
+      context: .
+      dockerfile: backend/UserManagementService/src/UserManagementService.Api/Dockerfile
+    container_name: medtravel-user-service
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=UserManagementDb;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;MultipleActiveResultSets=true
+    ports:
+      - "5001:80"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - medtravel-network
+
+  hospital-service:
+    build:
+      context: .
+      dockerfile: backend/HospitalService/src/HospitalService.Api/Dockerfile
+    container_name: medtravel-hospital-service
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=HospitalDb;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;MultipleActiveResultSets=true
+    ports:
+      - "5002:80"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - medtravel-network
+
+  taservice:
+    build:
+      context: .
+      dockerfile: backend/TAService/src/TAService.Api/Dockerfile
+    container_name: medtravel-taservice
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=TAServiceDb;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;MultipleActiveResultSets=true
+    ports:
+      - "5003:80"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - medtravel-network
+
+  messaging-service:
+    build:
+      context: .
+      dockerfile: backend/MessagingService/src/MessagingService.Api/Dockerfile
+    container_name: medtravel-messaging-service
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "5004:80"
+    networks:
+      - medtravel-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: medtravel-frontend
+    environment:
+      - REACT_APP_USER_SERVICE_URL=http://localhost:5001
+      - REACT_APP_HOSPITAL_SERVICE_URL=http://localhost:5002
+      - REACT_APP_TASERVICE_URL=http://localhost:5003
+      - REACT_APP_MESSAGING_SERVICE_URL=http://localhost:5004
+    ports:
+      - "3000:80"
+    depends_on:
+      - user-management-service
+      - hospital-service
+      - taservice
+      - messaging-service
+    networks:
+      - medtravel-network
+
+volumes:
+  sqlserver_data:
+    driver: local
+
+networks:
+  medtravel-network:
+    driver: bridge

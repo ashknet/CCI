@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>MedTravel.Database</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{2c598489-d06d-43c3-a3e8-8b583077431e}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql160DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>MedTravel.Database</RootNamespace>
+    <AssemblyName>MedTravel.Database</AssemblyName>
+    <ModelCollation>1033,CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+    <DefaultCollation>SQL_Latin1_General_CP1_CI_AS</DefaultCollation>
+    <DefaultFilegroup>PRIMARY</DefaultFilegroup>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="UserManagement\" />
+    <Folder Include="UserManagement\Tables\" />
+    <Folder Include="TAService\" />
+    <Folder Include="TAService\Tables\" />
+    <Folder Include="Messaging\" />
+    <Folder Include="Messaging\Tables\" />
+    <Folder Include="Metadata\" />
+    <Folder Include="Metadata\Tables\" />
+    <Folder Include="Hospital\" />
+    <Folder Include="Hospital\Tables\" />
+    <Folder Include="dbo\" />
+    <Folder Include="dbo\Tables\" />
+    <Folder Include="UserManagement\Stored Procedures\" />
+    <Folder Include="Hospital\Stored Procedures\" />
+    <Folder Include="TAService\Stored Procedures\" />
+    <Folder Include="Security\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="UserManagement\Tables\UserPreferences.sql" />
+    <Build Include="TAService\Tables\HotelRooms.sql" />
+    <Build Include="TAService\Tables\AccommodationBookings.sql" />
+    <Build Include="UserManagement\Tables\UserDocuments.sql" />
+    <Build Include="TAService\Tables\Payments.sql" />
+    <Build Include="UserManagement\Tables\InsurancePolicies.sql" />
+    <Build Include="Messaging\Tables\Threads.sql" />
+    <Build Include="UserManagement\Tables\Notifications.sql" />
+    <Build Include="Messaging\Tables\Messages.sql" />
+    <Build Include="UserManagement\Tables\AuditLogs.sql" />
+    <Build Include="Metadata\Tables\Countries.sql" />
+    <Build Include="Hospital\Tables\Hospitals.sql" />
+    <Build Include="Metadata\Tables\Cities.sql" />
+    <Build Include="Messaging\Tables\MessageAttachments.sql" />
+    <Build Include="Metadata\Tables\Languages.sql" />
+    <Build Include="Hospital\Tables\Departments.sql" />
+    <Build Include="Metadata\Tables\Currencies.sql" />
+    <Build Include="dbo\Tables\__EFMigrationsHistory.sql" />
+    <Build Include="Hospital\Tables\Doctors.sql" />
+    <Build Include="Metadata\Tables\Specialties.sql" />
+    <Build Include="Metadata\Tables\Diseases.sql" />
+    <Build Include="Hospital\Tables\DoctorSpecialties.sql" />
+    <Build Include="Metadata\Tables\DiseaseSpecialties.sql" />
+    <Build Include="Hospital\Tables\DoctorLanguages.sql" />
+    <Build Include="Metadata\Tables\AccreditationBodies.sql" />
+    <Build Include="Metadata\Tables\DocumentTypes.sql" />
+    <Build Include="Hospital\Tables\Credentials.sql" />
+    <Build Include="Metadata\Tables\Airlines.sql" />
+    <Build Include="Hospital\Tables\Appointments.sql" />
+    <Build Include="Metadata\Tables\Airports.sql" />
+    <Build Include="Hospital\Tables\DoctorAvailability.sql" />
+    <Build Include="UserManagement\Tables\Roles.sql" />
+    <Build Include="Hospital\Tables\Reviews.sql" />
+    <Build Include="UserManagement\Tables\Permissions.sql" />
+    <Build Include="UserManagement\Tables\RolePermissions.sql" />
+    <Build Include="Hospital\Tables\HospitalAccreditations.sql" />
+    <Build Include="UserManagement\Tables\Users.sql" />
+    <Build Include="TAService\Tables\Flights.sql" />
+    <Build Include="TAService\Tables\TransportBookings.sql" />
+    <Build Include="UserManagement\Tables\UserRoles.sql" />
+    <Build Include="TAService\Tables\Hotels.sql" />
+    <Build Include="UserManagement\Tables\Sessions.sql" />
+    <Build Include="UserManagement\Stored Procedures\sp_GetUserWithRoles.sql" />
+    <Build Include="UserManagement\Stored Procedures\sp_SearchUsers.sql" />
+    <Build Include="Hospital\Stored Procedures\sp_SearchHospitals.sql" />
+    <Build Include="Hospital\Stored Procedures\sp_SearchDoctors.sql" />
+    <Build Include="TAService\Stored Procedures\sp_SearchFlights.sql" />
+    <Build Include="Security\Hospital.sql" />
+    <Build Include="Security\Messaging.sql" />
+    <Build Include="Security\Metadata.sql" />
+    <Build Include="Security\TAService.sql" />
+    <Build Include="Security\TestData.sql" />
+    <Build Include="Security\UserManagement.sql" />
+  </ItemGroup>
+</Project>

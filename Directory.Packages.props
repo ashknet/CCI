@@ -1,0 +1,53 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Microsoft ASP.NET Core -->
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="8.0.10" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
+    <PackageVersion Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
+    <!-- Microsoft Entity Framework Core -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.10" />
+    <!-- Microsoft Extensions -->
+    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+    <!-- Azure Functions -->
+    <PackageVersion Include="Microsoft.Azure.Functions.Worker" Version="2.1.0" />
+    <PackageVersion Include="Microsoft.Azure.Functions.Worker.Sdk" Version="2.0.5" />
+    <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.3.1" />
+    <!-- Serilog -->
+    <PackageVersion Include="Serilog" Version="4.1.0" />
+    <PackageVersion Include="Serilog.AspNetCore" Version="8.0.2" />
+    <PackageVersion Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+    <PackageVersion Include="Serilog.Enrichers.Thread" Version="4.0.0" />
+    <PackageVersion Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageVersion Include="Serilog.Sinks.File" Version="6.0.0" />
+    <PackageVersion Include="Serilog.Extensions.Logging" Version="9.0.2" />
+    <!-- Validation -->
+    <PackageVersion Include="FluentValidation" Version="11.10.0" />
+    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.10.0" />
+    <!-- Security -->
+    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.2.0" />
+    <PackageVersion Include="BCrypt.Net-Next" Version="4.0.3" />
+    <!-- Swagger/OpenAPI -->
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.9.0" />
+    <!-- Other -->
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageVersion Include="AspNetCoreRateLimit" Version="5.0.0" />
+    <PackageVersion Include="AspNetCore.HealthChecks.SqlServer" Version="8.0.2" />
+    <!-- MedTravel Shared NuGet Packages -->
+    <PackageVersion Include="MedTravel.Shared" Version="1.0.0" />
+    <PackageVersion Include="MedTravel.Shared.Auth" Version="1.0.0" />
+    <PackageVersion Include="MedTravel.Shared.Logging" Version="1.0.0" />
+    <PackageVersion Include="MedTravel.Shared.Validation" Version="1.0.0" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    
+    <!-- NuGet Package Configuration -->
+    <IsPackable>true</IsPackable>
+    <PackageId>MedTravel.Shared.Validation</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>MedTravel Team</Authors>
+    <Company>MedTravel</Company>
+    <Description>Validation middleware and utilities for MedTravel microservices</Description>
+    <PackageTags>medtravel;validation;fluentvalidation;microservices</PackageTags>
+    <RepositoryUrl>https://github.com/your-org/medtravel</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MedTravel.Shared" />
+  </ItemGroup>
+
+</Project>
