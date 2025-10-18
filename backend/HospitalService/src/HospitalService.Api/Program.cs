@@ -43,7 +43,26 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", b => b.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+    options.AddPolicy("AllowAll", b => b
+        .AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .WithExposedHeaders("X-Total-Count", "X-Page-Count"));
+    
+    // Production CORS policy for specific domains
+    options.AddPolicy("Production", b => b
+        .WithOrigins(
+            "https://ananthcci.azurewebsites.net",
+            "https://cci-kohl.vercel.app",
+            "https://*.vercel.app",
+            "https://*.netlify.app",
+            "http://localhost:3000",
+            "http://localhost:5173"
+        )
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .WithExposedHeaders("X-Total-Count", "X-Page-Count")
+        .AllowCredentials());
 });
 
 builder.Services.AddDbContext<HospitalDbContext>(options =>
@@ -84,7 +103,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Hospital Service API v1"));
 }
 
-app.UseCors("AllowAll");
+// Use appropriate CORS policy based on environment
+if (app.Environment.IsDevelopment())
+{
+    app.UseCors("AllowAll");
+}
+else
+{
+    app.UseCors("Production");
+}
 app.UseHttpsRedirection();
 app.UseMedTravelAuth(builder.Configuration);
 app.MapControllers();

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // API Configuration
-const API_BASE_URL = 'https://localhost:64685/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://ananthcci.azurewebsites.net/api/v1';
 
 // Create axios instance with base configuration
 export const apiClient = axios.create({
@@ -89,7 +89,7 @@ export const API_ENDPOINTS = {
   },
   
   // Health Check (note: health endpoint is not under /api/v1)
-  HEALTH: 'https://localhost:64685/health',
+  HEALTH: 'https://ananthcci.azurewebsites.net/health',
 } as const;
 
 // Helper function to build URLs
