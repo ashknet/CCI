@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
-import { apiClient, API_ENDPOINTS } from '../../config/api'
+import { hospitalServiceClient, API_ENDPOINTS } from '../../config/api'
 
 interface SearchResult {
   id: string
@@ -29,7 +29,7 @@ const initialState: SearchState = {
 export const fetchSuggestions = createAsyncThunk(
   'search/fetchSuggestions',
   async (query: string) => {
-    const response = await apiClient.get(`${API_ENDPOINTS.SEARCH.SUGGESTIONS}?term=${query}`)
+    const response = await hospitalServiceClient.get(`${API_ENDPOINTS.SEARCH.SUGGESTIONS}?term=${query}`)
     return response.data.data || response.data
   }
 )
@@ -37,7 +37,7 @@ export const fetchSuggestions = createAsyncThunk(
 export const performSearch = createAsyncThunk(
   'search/performSearch',
   async (searchParams: { query: string; category?: string }) => {
-    const response = await apiClient.post(API_ENDPOINTS.SEARCH.HOSPITALS, searchParams)
+    const response = await hospitalServiceClient.post(API_ENDPOINTS.SEARCH.HOSPITALS, searchParams)
     return response.data.data?.items || response.data.items || response.data
   }
 )

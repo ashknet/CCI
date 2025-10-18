@@ -1,4 +1,4 @@
-import { apiClient, API_ENDPOINTS } from '../config/api';
+import { taServiceClient, API_ENDPOINTS } from '../config/api';
 
 export interface DoctorSelection {
   doctor: any;
@@ -49,7 +49,7 @@ class SelectionFlowService {
     if (request.includeReviews !== undefined) params.append('includeReviews', request.includeReviews.toString());
     if (request.reviewLimit) params.append('reviewLimit', request.reviewLimit.toString());
 
-    const response = await apiClient.get(`${API_ENDPOINTS.SELECTION.DOCTOR}/${doctorId}?${params}`);
+    const response = await taServiceClient.get(`${API_ENDPOINTS.SELECTION.DOCTOR}/${doctorId}?${params}`);
     return response.data.data;
   }
 
@@ -58,7 +58,7 @@ class SelectionFlowService {
     if (startDate) params.append('startDate', startDate);
     if (endDate) params.append('endDate', endDate);
 
-    const response = await apiClient.get(`${API_ENDPOINTS.SELECTION.DOCTOR}/${doctorId}/availability?${params}`);
+    const response = await taServiceClient.get(`${API_ENDPOINTS.SELECTION.DOCTOR}/${doctorId}/availability?${params}`);
     return response.data.data;
   }
 
@@ -71,7 +71,7 @@ class SelectionFlowService {
     if (request.sortBy) params.append('sortBy', request.sortBy);
     if (request.includeAvailability !== undefined) params.append('includeAvailability', request.includeAvailability.toString());
 
-    const response = await apiClient.get(`${API_ENDPOINTS.SELECTION.HOSPITAL}/${hospitalId}?${params}`);
+    const response = await taServiceClient.get(`${API_ENDPOINTS.SELECTION.HOSPITAL}/${hospitalId}?${params}`);
     return response.data.data;
   }
 
@@ -83,7 +83,7 @@ class SelectionFlowService {
     if (request.sortBy) params.append('sortBy', request.sortBy);
     if (request.includeAvailability !== undefined) params.append('includeAvailability', request.includeAvailability.toString());
 
-    const response = await apiClient.get(`${API_ENDPOINTS.SELECTION.HOSPITAL}/${hospitalId}/doctors?${params}`);
+    const response = await taServiceClient.get(`${API_ENDPOINTS.SELECTION.HOSPITAL}/${hospitalId}/doctors?${params}`);
     return response.data.data;
   }
 
@@ -96,7 +96,7 @@ class SelectionFlowService {
     if (request.sortBy) params.append('sortBy', request.sortBy);
     if (request.maxDistance) params.append('maxDistance', request.maxDistance.toString());
 
-    const response = await apiClient.get(`${API_ENDPOINTS.SELECTION.CITY}/${cityId}?${params}`);
+    const response = await taServiceClient.get(`${API_ENDPOINTS.SELECTION.CITY}/${cityId}?${params}`);
     return response.data.data;
   }
 
@@ -108,7 +108,7 @@ class SelectionFlowService {
     if (request.sortBy) params.append('sortBy', request.sortBy);
     if (request.maxDistance) params.append('maxDistance', request.maxDistance.toString());
 
-    const response = await apiClient.get(`${API_ENDPOINTS.SELECTION.CITY}/${cityId}/hospitals?${params}`);
+    const response = await taServiceClient.get(`${API_ENDPOINTS.SELECTION.CITY}/${cityId}/hospitals?${params}`);
     return response.data.data;
   }
 
@@ -122,7 +122,7 @@ class SelectionFlowService {
     if (request.sortBy) params.append('sortBy', request.sortBy);
     if (request.includeAvailability !== undefined) params.append('includeAvailability', request.includeAvailability.toString());
 
-    const response = await apiClient.get(`${API_ENDPOINTS.SELECTION.DISEASE}/${diseaseId}?${params}`);
+    const response = await taServiceClient.get(`${API_ENDPOINTS.SELECTION.DISEASE}/${diseaseId}?${params}`);
     return response.data.data;
   }
 
@@ -135,7 +135,7 @@ class SelectionFlowService {
     if (request.sortBy) params.append('sortBy', request.sortBy);
     if (request.includeAvailability !== undefined) params.append('includeAvailability', request.includeAvailability.toString());
 
-    const response = await apiClient.get(`${API_ENDPOINTS.SELECTION.DISEASE}/${diseaseId}/doctors?${params}`);
+    const response = await taServiceClient.get(`${API_ENDPOINTS.SELECTION.DISEASE}/${diseaseId}/doctors?${params}`);
     return response.data.data;
   }
 
@@ -145,7 +145,7 @@ class SelectionFlowService {
     if (cityId) params.append('cityId', cityId);
     if (hospitalId) params.append('hospitalId', hospitalId);
 
-    const response = await apiClient.get(`${API_ENDPOINTS.SELECTION.SPECIALTIES}?${params}`);
+    const response = await taServiceClient.get(`${API_ENDPOINTS.SELECTION.SPECIALTIES}?${params}`);
     return response.data.data;
   }
 
@@ -154,12 +154,12 @@ class SelectionFlowService {
     params.append('date', date);
     params.append('time', time);
 
-    const response = await apiClient.get(`${API_ENDPOINTS.SELECTION.DOCTOR}/${doctorId}/check-availability?${params}`);
+    const response = await taServiceClient.get(`${API_ENDPOINTS.SELECTION.DOCTOR}/${doctorId}/check-availability?${params}`);
     return response.data.data;
   }
 
   async getNextAvailableSlot(doctorId: string): Promise<string | null> {
-    const response = await apiClient.get(`${API_ENDPOINTS.SELECTION.DOCTOR}/${doctorId}/next-available`);
+    const response = await taServiceClient.get(`${API_ENDPOINTS.SELECTION.DOCTOR}/${doctorId}/next-available`);
     return response.data.data;
   }
 }

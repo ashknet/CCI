@@ -36,6 +36,9 @@ const Header = () => {
 
             {isAuthenticated ? (
               <>
+                <Link to="/wizard" className="btn-primary text-sm">
+                  Book Medical Travel
+                </Link>
                 <Link to="/bookings" className="text-gray-600 hover:text-gray-900">
                   {t('bookings')}
                 </Link>

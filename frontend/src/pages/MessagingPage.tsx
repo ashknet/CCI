@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import { messagingServiceClient } from '../config/api'
 
 const MessagingPage = () => {
   const [threads, setThreads] = useState<any[]>([])
@@ -20,7 +20,7 @@ const MessagingPage = () => {
 
   const fetchThreads = async () => {
     try {
-      const response = await axios.get('/api/messages/threads')
+      const response = await messagingServiceClient.get('/api/v1/messages/threads')
       setThreads(response.data.data.items)
     } catch (error) {
       console.error('Failed to fetch threads', error)
@@ -29,7 +29,7 @@ const MessagingPage = () => {
 
   const fetchMessages = async (threadId: string) => {
     try {
-      const response = await axios.get(`/api/messages/threads/${threadId}`)
+      const response = await messagingServiceClient.get(`/api/v1/messages/threads/${threadId}`)
       setMessages(response.data.data)
     } catch (error) {
       console.error('Failed to fetch messages', error)
@@ -42,7 +42,7 @@ const MessagingPage = () => {
 
     setLoading(true)
     try {
-      await axios.post(`/api/messages/threads/${selectedThread.id}/messages`, {
+      await messagingServiceClient.post(`/api/v1/messages/threads/${selectedThread.id}/messages`, {
         content: newMessage
       })
       setNewMessage('')

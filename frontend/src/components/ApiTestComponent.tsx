@@ -1,5 +1,10 @@
 import { useState } from 'react';
-import { apiClient, API_ENDPOINTS } from '../config/api';
+import { 
+  hospitalServiceClient,
+  userManagementClient, 
+  messagingServiceClient,
+  API_ENDPOINTS 
+} from '../config/api';
 
 const ApiTestComponent = () => {
   const [testResults, setTestResults] = useState<any[]>([]);
@@ -17,10 +22,10 @@ const ApiTestComponent = () => {
   const testHealthEndpoint = async () => {
     setLoading(true);
     try {
-      const response = await apiClient.get('/health');
-      addTestResult('Health Check', response.data);
+      const response = await hospitalServiceClient.get('/health');
+      addTestResult('Hospital Service Health Check', response.data);
     } catch (error: any) {
-      addTestResult('Health Check', null, error.response?.data || error.message);
+      addTestResult('Hospital Service Health Check', null, error.response?.data || error.message);
     } finally {
       setLoading(false);
     }
@@ -29,7 +34,7 @@ const ApiTestComponent = () => {
   const testSearchSuggestions = async () => {
     setLoading(true);
     try {
-      const response = await apiClient.get(`${API_ENDPOINTS.SEARCH.SUGGESTIONS}?query=hospital`);
+      const response = await hospitalServiceClient.get(`${API_ENDPOINTS.SEARCH.SUGGESTIONS}?query=hospital`);
       addTestResult('Search Suggestions', response.data);
     } catch (error: any) {
       addTestResult('Search Suggestions', null, error.response?.data || error.message);
@@ -41,7 +46,7 @@ const ApiTestComponent = () => {
   const testHospitals = async () => {
     setLoading(true);
     try {
-      const response = await apiClient.get(`${API_ENDPOINTS.SEARCH.HOSPITALS}?query=hospital`);
+      const response = await hospitalServiceClient.get(`${API_ENDPOINTS.SEARCH.HOSPITALS}?query=hospital`);
       addTestResult('Hospital Search', response.data);
     } catch (error: any) {
       addTestResult('Hospital Search', null, error.response?.data || error.message);
@@ -53,10 +58,34 @@ const ApiTestComponent = () => {
   const testDoctors = async () => {
     setLoading(true);
     try {
-      const response = await apiClient.get(`${API_ENDPOINTS.SEARCH.DOCTORS}?query=doctor`);
+      const response = await hospitalServiceClient.get(`${API_ENDPOINTS.SEARCH.DOCTORS}?query=doctor`);
       addTestResult('Doctor Search', response.data);
     } catch (error: any) {
       addTestResult('Doctor Search', null, error.response?.data || error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const testUserManagementHealth = async () => {
+    setLoading(true);
+    try {
+      const response = await userManagementClient.get('/health');
+      addTestResult('User Management Health Check', response.data);
+    } catch (error: any) {
+      addTestResult('User Management Health Check', null, error.response?.data || error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const testMessagingHealth = async () => {
+    setLoading(true);
+    try {
+      const response = await messagingServiceClient.get('/health');
+      addTestResult('Messaging Service Health Check', response.data);
+    } catch (error: any) {
+      addTestResult('Messaging Service Health Check', null, error.response?.data || error.message);
     } finally {
       setLoading(false);
     }
@@ -68,38 +97,52 @@ const ApiTestComponent = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Hospital Service API Test</h1>
+      <h1 className="text-3xl font-bold mb-6">Multi-Service API Test</h1>
       
       <div className="mb-6">
         <h2 className="text-xl font-semibold mb-4">API Endpoints Test</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <button
             onClick={testHealthEndpoint}
             disabled={loading}
             className="btn-primary"
           >
-            Test Health
+            TA Service Health
+          </button>
+          <button
+            onClick={testUserManagementHealth}
+            disabled={loading}
+            className="btn-primary"
+          >
+            User Management Health
+          </button>
+          <button
+            onClick={testMessagingHealth}
+            disabled={loading}
+            className="btn-primary"
+          >
+            Messaging Health
           </button>
           <button
             onClick={testSearchSuggestions}
             disabled={loading}
             className="btn-primary"
           >
-            Test Suggestions
+            Search Suggestions
           </button>
           <button
             onClick={testHospitals}
             disabled={loading}
             className="btn-primary"
           >
-            Test Hospitals
+            Hospital Search
           </button>
           <button
             onClick={testDoctors}
             disabled={loading}
             className="btn-primary"
           >
-            Test Doctors
+            Doctor Search
           </button>
         </div>
         <button
@@ -151,14 +194,24 @@ const ApiTestComponent = () => {
 
       <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded">
         <h3 className="font-semibold text-blue-800 mb-2">API Configuration</h3>
-        <p className="text-blue-700 text-sm">
-          <strong>Base URL:</strong> https://localhost:64685/api<br/>
-          <strong>Health Endpoint:</strong> /health<br/>
-          <strong>Search Endpoints:</strong> /Search/suggestions, /Search/hospitals, /Search/doctors<br/>
-          <strong>Hospital Endpoints:</strong> /Hospitals/&#123;id&#125;<br/>
-          <strong>Doctor Endpoints:</strong> /Doctors/&#123;id&#125;<br/>
-          <strong>Appointment Endpoints:</strong> /Appointments/*
-        </p>
+        <div className="text-blue-700 text-sm space-y-2">
+          <div>
+            <strong>TA Service (Main):</strong> https://localhost:64686<br/>
+            <span className="ml-4">• Health: /health</span><br/>
+            <span className="ml-4">• Search: /search/suggest, /search/hospitals, /search/doctors</span><br/>
+            <span className="ml-4">• Hospitals: /Hospitals/&#123;id&#125;</span><br/>
+            <span className="ml-4">• Doctors: /Doctors/&#123;id&#125;</span><br/>
+            <span className="ml-4">• Appointments: /Appointments/*</span>
+          </div>
+          <div>
+            <strong>User Management:</strong> https://localhost:64687<br/>
+            <span className="ml-4">• Auth: /auth/login, /auth/register, /auth/profile</span>
+          </div>
+          <div>
+            <strong>Messaging Service:</strong> https://localhost:64688<br/>
+            <span className="ml-4">• Messages: /message-threads, /messages</span>
+          </div>
+        </div>
       </div>
     </div>
   );

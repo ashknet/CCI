@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
-import { apiClient, API_ENDPOINTS } from '../../config/api'
+import { userManagementClient, API_ENDPOINTS } from '../../config/api'
 
 interface User {
   id: string
@@ -36,7 +36,7 @@ const initialState: AuthState = {
 export const login = createAsyncThunk(
   'auth/login',
   async ({ email, password }: { email: string; password: string }) => {
-    const response = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN, { email, password })
+    const response = await userManagementClient.post(API_ENDPOINTS.AUTH.LOGIN, { email, password })
     return response.data.data || response.data
   }
 )
@@ -44,7 +44,7 @@ export const login = createAsyncThunk(
 export const register = createAsyncThunk(
   'auth/register',
   async (userData: any) => {
-    const response = await apiClient.post(API_ENDPOINTS.AUTH.REGISTER, userData)
+    const response = await userManagementClient.post(API_ENDPOINTS.AUTH.REGISTER, userData)
     return response.data.data || response.data
   }
 )

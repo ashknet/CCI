@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../store/store'
-import axios from 'axios'
+import { taServiceClient } from '../config/api'
 
 const CheckoutPage = () => {
   const { appointment, transport, accommodation } = useSelector((state: RootState) => state.booking)
@@ -15,7 +15,7 @@ const CheckoutPage = () => {
 
   const fetchCostBreakdown = async () => {
     try {
-      const response = await axios.get('/api/accommodation/cost-breakdown')
+      const response = await taServiceClient.get('/api/v1/accommodation/cost-breakdown')
       setCostBreakdown(response.data.data)
     } catch (error) {
       console.error('Failed to fetch cost breakdown', error)

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import axios from 'axios'
+import { taServiceClient } from '../config/api'
 
 const TravelBookingPage = () => {
   const [travelType, setTravelType] = useState<'flight' | 'train'>('flight')
@@ -17,8 +17,8 @@ const TravelBookingPage = () => {
     setLoading(true)
     
     try {
-      const endpoint = travelType === 'flight' ? '/api/transport/flights/search' : '/api/transport/trains/search'
-      const response = await axios.post(endpoint, {
+      const endpoint = travelType === 'flight' ? '/api/v1/transport/flights/search' : '/api/v1/transport/trains/search'
+      const response = await taServiceClient.post(endpoint, {
         from,
         to,
         departureDate,
@@ -38,7 +38,7 @@ const TravelBookingPage = () => {
 
   const handleBook = async (item: any) => {
     try {
-      const response = await axios.post('/api/transport/book', {
+      const response = await taServiceClient.post('/api/v1/transport/book', {
         type: travelType,
         referenceId: item.id,
         passengerName: 'John Doe',

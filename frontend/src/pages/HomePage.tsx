@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import SearchBar from '../components/SearchBar'
 
 const HomePage = () => {
@@ -17,6 +18,14 @@ const HomePage = () => {
           </p>
           <div className="max-w-3xl mx-auto">
             <SearchBar large />
+          </div>
+          <div className="mt-8">
+            <Link 
+              to="/wizard" 
+              className="inline-flex items-center px-8 py-4 bg-white text-primary-600 font-semibold rounded-lg hover:bg-gray-50 transition-colors shadow-lg"
+            >
+              🚀 Start Complete Medical Travel Booking
+            </Link>
           </div>
         </div>
       </section>

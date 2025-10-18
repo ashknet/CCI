@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { apiClient, API_ENDPOINTS } from '../../config/api'
+import { taServiceClient, API_ENDPOINTS } from '../../config/api'
 
 interface AppointmentState {
   appointments: any[]
@@ -18,7 +18,7 @@ const initialState: AppointmentState = {
 export const bookAppointment = createAsyncThunk(
   'appointment/book',
   async (appointmentData: any) => {
-    const response = await apiClient.post(API_ENDPOINTS.APPOINTMENTS.CREATE, appointmentData)
+    const response = await taServiceClient.post(API_ENDPOINTS.APPOINTMENTS.CREATE, appointmentData)
     return response.data.data || response.data
   }
 )
@@ -26,7 +26,7 @@ export const bookAppointment = createAsyncThunk(
 export const fetchMyAppointments = createAsyncThunk(
   'appointment/fetchMy',
   async () => {
-    const response = await apiClient.get(API_ENDPOINTS.APPOINTMENTS.GET_MY)
+    const response = await taServiceClient.get(API_ENDPOINTS.APPOINTMENTS.GET_MY)
     return response.data.data?.items || response.data.items || response.data
   }
 )

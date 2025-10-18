@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { apiClient, API_ENDPOINTS } from '../config/api'
+import { taServiceClient, API_ENDPOINTS } from '../config/api'
 
 const MyBookingsPage = () => {
   const [activeTab, setActiveTab] = useState<'appointments' | 'travel' | 'accommodation'>('appointments')
@@ -16,18 +16,16 @@ const MyBookingsPage = () => {
     setLoading(true)
     try {
       if (activeTab === 'appointments') {
-        const response = await apiClient.get(API_ENDPOINTS.APPOINTMENTS.GET_MY)
+        const response = await taServiceClient.get(API_ENDPOINTS.APPOINTMENTS.GET_MY)
         const data = response.data.data || response.data
         setAppointments(data.items || data || [])
       } else if (activeTab === 'travel') {
-        // Note: These endpoints would be from TAService, not HospitalService
-        // For now, we'll keep them as mock data or handle separately
-        const response = await apiClient.get('/api/transport/bookings')
+        // Transport bookings are handled by TA Service
+        const response = await taServiceClient.get('/api/v1/transport/bookings')
         setTravelBookings(response.data.data || response.data || [])
       } else {
-        // Note: These endpoints would be from TAService, not HospitalService
-        // For now, we'll keep them as mock data or handle separately
-        const response = await apiClient.get('/api/accommodation/bookings')
+        // Accommodation bookings are handled by TA Service
+        const response = await taServiceClient.get('/api/v1/accommodation/bookings')
         setHotelBookings(response.data.data || response.data || [])
       }
     } catch (error) {
@@ -41,7 +39,7 @@ const MyBookingsPage = () => {
     if (!confirm('Are you sure you want to cancel this appointment?')) return
 
     try {
-      await apiClient.patch(`${API_ENDPOINTS.APPOINTMENTS.CANCEL}/${id}/cancel`, 'User requested cancellation')
+      await taServiceClient.patch(`${API_ENDPOINTS.APPOINTMENTS.CANCEL}/${id}/cancel`, 'User requested cancellation')
       alert('Appointment cancelled successfully')
       fetchBookings()
     } catch (error) {

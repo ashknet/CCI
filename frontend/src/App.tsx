@@ -13,6 +13,7 @@ import ProfilePage from './pages/ProfilePage'
 import MyBookingsPage from './pages/MyBookingsPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
+import BookingWizardPage from './pages/BookingWizardPage'
 import ApiTestComponent from './components/ApiTestComponent'
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
         <Route path="messages" element={<MessagingPage />} />
         <Route path="profile" element={<ProfilePage />} />
         <Route path="bookings" element={<MyBookingsPage />} />
+        <Route path="wizard" element={<BookingWizardPage />} />
         <Route path="api-test" element={<ApiTestComponent />} />
       </Route>
     </Routes>

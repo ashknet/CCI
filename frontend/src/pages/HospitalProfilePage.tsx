@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { apiClient, API_ENDPOINTS } from '../config/api'
+import { hospitalServiceClient, API_ENDPOINTS } from '../config/api'
 
 interface HospitalData {
   id: string
@@ -44,7 +44,7 @@ const HospitalProfilePage = () => {
 
       // Try the v1 endpoint first (more detailed)
       try {
-        const response = await apiClient.get(`${API_ENDPOINTS.HOSPITALS.GET_BY_ID}/${id}`)
+        const response = await hospitalServiceClient.get(`${API_ENDPOINTS.HOSPITALS.GET_BY_ID}/${id}`)
         const hospitalData = response.data.data || response.data
         
         setHospital({
@@ -77,7 +77,7 @@ const HospitalProfilePage = () => {
         console.warn('V1 endpoint failed, trying basic endpoint:', v1Error)
         
         // Fallback to basic endpoint
-        const response = await apiClient.get(`/api/Hospitals/${id}`)
+        const response = await hospitalServiceClient.get(`/api/v1/Hospitals/${id}`)
         const hospitalData = response.data.data || response.data
         
         setHospital({
@@ -117,7 +117,7 @@ const HospitalProfilePage = () => {
 
   const fetchDepartments = async () => {
     try {
-      const response = await apiClient.get(`/api/Hospitals/${id}/departments`)
+      const response = await hospitalServiceClient.get(`/api/v1/Hospitals/${id}/departments`)
       const departmentsData = response.data.data || response.data
       setDepartments(Array.isArray(departmentsData) ? departmentsData : [])
     } catch (error) {
@@ -127,7 +127,7 @@ const HospitalProfilePage = () => {
 
   const fetchReviews = async () => {
     try {
-      const response = await apiClient.get(`/api/Hospitals/${id}/reviews`)
+      const response = await hospitalServiceClient.get(`/api/v1/Hospitals/${id}/reviews`)
       const reviewsData = response.data.data?.items || response.data.data || response.data
       setReviews(Array.isArray(reviewsData) ? reviewsData : [])
     } catch (error) {

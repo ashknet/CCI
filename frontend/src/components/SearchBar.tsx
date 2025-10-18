@@ -39,7 +39,7 @@ const SearchBar = ({ large = false }: { large?: boolean }) => {
     e.preventDefault()
     if (query.trim()) {
       dispatch(performSearch({ query }))
-      navigate('/search')
+      navigate('/wizard')
       setShowSuggestions(false)
     }
   }
@@ -47,7 +47,7 @@ const SearchBar = ({ large = false }: { large?: boolean }) => {
   const handleSuggestionClick = (suggestion: any) => {
     dispatch(setQuery(suggestion.text))
     dispatch(performSearch({ query: suggestion.text, category: suggestion.category }))
-    navigate('/search')
+    navigate('/wizard')
     setShowSuggestions(false)
   }
 

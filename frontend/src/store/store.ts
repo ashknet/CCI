@@ -3,6 +3,7 @@ import authReducer from './slices/authSlice'
 import searchReducer from './slices/searchSlice'
 import appointmentReducer from './slices/appointmentSlice'
 import bookingReducer from './slices/bookingSlice'
+import wizardReducer from './slices/wizardSlice'
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     search: searchReducer,
     appointment: appointmentReducer,
     booking: bookingReducer,
+    wizard: wizardReducer,
   },
 })
 

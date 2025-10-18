@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import axios from 'axios'
+import { taServiceClient } from '../config/api'
 
 const AccommodationPage = () => {
   const [city, setCity] = useState('Hyderabad')
@@ -17,7 +17,7 @@ const AccommodationPage = () => {
     setLoading(true)
     
     try {
-      const response = await axios.post('/api/accommodation/search', {
+      const response = await taServiceClient.post('/api/v1/accommodation/search', {
         city,
         checkIn,
         checkOut,
@@ -39,7 +39,7 @@ const AccommodationPage = () => {
     setSelectedHotel(hotel)
     
     try {
-      const response = await axios.get(`/api/accommodation/${hotel.id}/rooms`)
+      const response = await taServiceClient.get(`/api/v1/accommodation/${hotel.id}/rooms`)
       setHotelRooms(response.data.data)
     } catch (error) {
       console.error('Failed to fetch rooms', error)
@@ -48,7 +48,7 @@ const AccommodationPage = () => {
 
   const handleBookRoom = async (room: any) => {
     try {
-      const response = await axios.post('/api/accommodation/book', {
+      const response = await taServiceClient.post('/api/v1/accommodation/book', {
         hotelId: selectedHotel.id,
         roomId: room.id,
         checkInDate: checkIn,

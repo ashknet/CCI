@@ -31,7 +31,7 @@ public class FastSearchService : IFastSearchService
     {
         _configuration = configuration;
         _cache = cache;
-        _connectionString = configuration.GetConnectionString("DefaultConnection") 
+        _connectionString = configuration.GetConnectionString("DefaultConnection")
             ?? throw new ArgumentNullException("Connection string not found");
     }
 
@@ -90,17 +90,21 @@ public class FastSearchService : IFastSearchService
             // Add parameters
             command.Parameters.AddWithValue("@SearchTerm", searchTerm);
             command.Parameters.AddWithValue("@MaxResults", maxResults);
+            Log.Information("Database call starting");
 
             using var reader = await command.ExecuteReaderAsync(CommandBehavior.SequentialAccess);
-            
+            Log.Information("Database call ending" + _connectionString);
+
             while (await reader.ReadAsync())
             {
+                Log.Information("On While Loop" + reader.GetOrdinal("Text"));
+
                 var suggestion = new SearchSuggestion
                 {
                     Text = reader.GetString(reader.GetOrdinal("Text")),
                     Category = reader.GetString(reader.GetOrdinal("Category")),
-                    Id = reader.IsDBNull(reader.GetOrdinal("Id")) 
-                        ? null 
+                    Id = reader.IsDBNull(reader.GetOrdinal("Id"))
+                        ? null
                         : reader.GetGuid(reader.GetOrdinal("Id"))
                 };
 

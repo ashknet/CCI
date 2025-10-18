@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from '../store/store'
 import { bookAppointment } from '../store/slices/appointmentSlice'
-import { apiClient, API_ENDPOINTS } from '../config/api'
+import { hospitalServiceClient, taServiceClient, API_ENDPOINTS } from '../config/api'
 
 const AppointmentBookingPage = () => {
   const [searchParams] = useSearchParams()
@@ -32,7 +32,7 @@ const AppointmentBookingPage = () => {
 
   const fetchDoctor = async () => {
     try {
-      const response = await apiClient.get(`${API_ENDPOINTS.DOCTORS.GET_BY_ID}/${doctorId}`)
+      const response = await hospitalServiceClient.get(`${API_ENDPOINTS.DOCTORS.GET_BY_ID}/${doctorId}`)
       setDoctor(response.data.data || response.data)
     } catch (error) {
       console.error('Failed to fetch doctor', error)
@@ -43,7 +43,7 @@ const AppointmentBookingPage = () => {
     try {
       const startDate = selectedDate
       const endDate = selectedDate
-      const response = await apiClient.get(
+      const response = await taServiceClient.get(
         `${API_ENDPOINTS.APPOINTMENTS.GET_AVAILABLE_SLOTS}/${doctorId}/available-slots?startDate=${startDate}&endDate=${endDate}`
       )
       const slots = response.data.data || response.data

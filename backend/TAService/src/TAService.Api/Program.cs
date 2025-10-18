@@ -34,12 +34,10 @@ builder.Services.AddCors(options =>
     // Production CORS policy for specific domains
     options.AddPolicy("Production", b => b
         .WithOrigins(
-            "https://ananthcci.azurewebsites.net",
             "https://cci-kohl.vercel.app",
-            "https://*.vercel.app",
-            "https://*.netlify.app",
             "http://localhost:3000",
-            "http://localhost:5173"
+            "http://localhost:5173",
+            "https://localhost:5173"
         )
         .AllowAnyMethod()
         .AllowAnyHeader()
@@ -63,15 +61,15 @@ var app = builder.Build();
 app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseMiddleware<ValidationMiddleware>();
 
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
     app.UseSwaggerUI();
     
-    using var scope = app.Services.CreateScope();
-    var dbContext = scope.ServiceProvider.GetRequiredService<TransportationDbContext>();
-    dbContext.Database.Migrate();
-}
+    //using var scope = app.Services.CreateScope();
+    //var dbContext = scope.ServiceProvider.GetRequiredService<TransportationDbContext>();
+    //dbContext.Database.Migrate();
+//}
 
 // Use appropriate CORS policy based on environment
 if (app.Environment.IsDevelopment())

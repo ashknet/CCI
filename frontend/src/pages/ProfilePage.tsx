@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../store/store'
-import axios from 'axios'
+import { userManagementClient } from '../config/api'
 
 const ProfilePage = () => {
   const { user } = useSelector((state: RootState) => state.auth)
@@ -36,7 +36,7 @@ const ProfilePage = () => {
     setLoading(true)
 
     try {
-      await axios.put('/api/auth/profile', formData)
+      await userManagementClient.put('/api/v1/auth/profile', formData)
       alert('Profile updated successfully!')
       setEditing(false)
     } catch (error) {
