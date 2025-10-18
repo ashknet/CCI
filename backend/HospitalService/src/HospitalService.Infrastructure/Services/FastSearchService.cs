@@ -3,6 +3,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using HospitalService.Core.DTOs;
+using Serilog;
 
 namespace HospitalService.Infrastructure.Services;
 
@@ -109,11 +110,11 @@ public class FastSearchService : IFastSearchService
         catch (SqlException ex)
         {
             // Log error but don't throw - return empty list for better UX
-            Console.WriteLine($"Database error in search: {ex.Message}");
+            Log.Warning(ex, "Database error in search: {ErrorMessage}", ex.Message);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Unexpected error in search: {ex.Message}");
+            Log.Error(ex, "Unexpected error in search: {ErrorMessage}", ex.Message);
         }
 
         return suggestions;

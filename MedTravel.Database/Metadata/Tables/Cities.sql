@@ -11,6 +11,8 @@
 );
 
 
+
+
 GO
 CREATE NONCLUSTERED INDEX [IX_Metadata_Cities_CountryId]
     ON [Metadata].[Cities]([CountryId] ASC);
@@ -19,4 +21,10 @@ CREATE NONCLUSTERED INDEX [IX_Metadata_Cities_CountryId]
 GO
 CREATE NONCLUSTERED INDEX [IX_Metadata_Cities_Name]
     ON [Metadata].[Cities]([Name] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_Cities_Search]
+    ON [Metadata].[Cities]([Name] ASC, [IsActive] ASC)
+    INCLUDE([Id], [State]);
 

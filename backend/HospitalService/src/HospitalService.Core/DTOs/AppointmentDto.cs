@@ -2,26 +2,19 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HospitalService.Core.DTOs;
 
-public class AppointmentDto
-{
-    public Guid Id { get; set; }
-    public Guid DoctorId { get; set; }
-    public Guid PatientId { get; set; }
-    public DateTime ScheduledDate { get; set; }
-    public TimeSpan ScheduledTime { get; set; }
-    public int DurationMinutes { get; set; }
-    public AppointmentStatus Status { get; set; }
-    public string ReasonForVisit { get; set; } = string.Empty;
-    public string? Notes { get; set; }
-    public decimal Fee { get; set; }
-    public bool IsPaid { get; set; }
-    public DateTime? PaidAt { get; set; }
-    public string? CancellationReason { get; set; }
-    public DateTime? CancelledAt { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime? UpdatedAt { get; set; }
-    public string ConfirmationNumber { get; set; } = string.Empty;
-}
+public record AppointmentDto(
+    Guid Id,
+    Guid DoctorId,
+    string DoctorName,
+    Guid PatientId,
+    DateTime ScheduledDate,
+    TimeSpan ScheduledTime,
+    int DurationMinutes,
+    AppointmentStatus Status,
+    string ReasonForVisit,
+    decimal Fee,
+    bool IsPaid
+);
 
 public class CreateAppointmentDto
 {
@@ -73,11 +66,3 @@ public enum AppointmentStatus
     NoShow = 5
 }
 
-public class PagedResult<T>
-{
-    public List<T> Items { get; set; } = new();
-    public int TotalCount { get; set; }
-    public int PageNumber { get; set; }
-    public int PageSize { get; set; }
-    public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
-}

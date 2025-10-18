@@ -7,6 +7,7 @@ public class UserManagementDbContext : DbContext
 {
     public UserManagementDbContext(DbContextOptions<UserManagementDbContext> options) : base(options) { }
 
+    // UserManagement schema entities
     public DbSet<User> Users => Set<User>();
     public DbSet<Role> Roles => Set<Role>();
     public DbSet<UserRole> UserRoles => Set<UserRole>();
@@ -18,29 +19,53 @@ public class UserManagementDbContext : DbContext
     public DbSet<InsurancePolicy> InsurancePolicies => Set<InsurancePolicy>();
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
     public DbSet<Notification> Notifications => Set<Notification>();
-    public DbSet<NotificationTemplate> NotificationTemplates => Set<NotificationTemplate>();
-    public DbSet<NotificationSchedule> NotificationSchedules => Set<NotificationSchedule>();
+    
+    // Metadata schema entities
+    public DbSet<Country> Countries => Set<Country>();
+    public DbSet<City> Cities => Set<City>();
+    public DbSet<Language> Languages => Set<Language>();
+    public DbSet<Currency> Currencies => Set<Currency>();
+    public DbSet<DocumentType> DocumentTypes => Set<DocumentType>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.HasDefaultSchema("UserManagement");
         base.OnModelCreating(modelBuilder);
+
+        // Configure Metadata schema entities
+        modelBuilder.Entity<Country>().ToTable("Countries", "Metadata");
+        modelBuilder.Entity<City>().ToTable("Cities", "Metadata");
+        modelBuilder.Entity<Language>().ToTable("Languages", "Metadata");
+        modelBuilder.Entity<Currency>().ToTable("Currencies", "Metadata");
+        modelBuilder.Entity<DocumentType>().ToTable("DocumentTypes", "Metadata");
 
         // User entity configuration
         modelBuilder.Entity<User>(entity =>
         {
+            entity.ToTable("Users", "UserManagement");
             entity.HasKey(e => e.Id);
             entity.HasIndex(e => e.Email).IsUnique();
             entity.Property(e => e.Email).IsRequired().HasMaxLength(255);
             entity.Property(e => e.FirstName).IsRequired().HasMaxLength(100);
             entity.Property(e => e.LastName).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Phone).HasMaxLength(20);
-            entity.Property(e => e.Country).HasMaxLength(100);
-            entity.Property(e => e.City).HasMaxLength(100);
+            
+            // Foreign key relationships
+            entity.HasOne(e => e.Country)
+                  .WithMany(c => c.Users)
+                  .HasForeignKey(e => e.CountryId)
+                  .OnDelete(DeleteBehavior.Restrict);
+                  
+            entity.HasOne(e => e.City)
+                  .WithMany(c => c.Users)
+                  .HasForeignKey(e => e.CityId)
+                  .OnDelete(DeleteBehavior.Restrict);
         });
 
         // Role entity configuration
         modelBuilder.Entity<Role>(entity =>
         {
+            entity.ToTable("Roles", "UserManagement");
             entity.HasKey(e => e.Id);
             entity.HasIndex(e => e.Name).IsUnique();
             entity.Property(e => e.Name).IsRequired().HasMaxLength(50);
@@ -49,6 +74,7 @@ public class UserManagementDbContext : DbContext
         // UserRole relationship
         modelBuilder.Entity<UserRole>(entity =>
         {
+            entity.ToTable("UserRoles", "UserManagement");
             entity.HasKey(e => e.Id);
             entity.HasOne(e => e.User)
                 .WithMany(u => u.UserRoles)
@@ -64,6 +90,7 @@ public class UserManagementDbContext : DbContext
         // Permission entity configuration
         modelBuilder.Entity<Permission>(entity =>
         {
+            entity.ToTable("Permissions", "UserManagement");
             entity.HasKey(e => e.Id);
             entity.HasIndex(e => new { e.Resource, e.Action }).IsUnique();
             entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
@@ -74,6 +101,7 @@ public class UserManagementDbContext : DbContext
         // RolePermission relationship
         modelBuilder.Entity<RolePermission>(entity =>
         {
+            entity.ToTable("RolePermissions", "UserManagement");
             entity.HasKey(e => e.Id);
             entity.HasOne(e => e.Role)
                 .WithMany(r => r.RolePermissions)
@@ -89,6 +117,7 @@ public class UserManagementDbContext : DbContext
         // Session entity configuration
         modelBuilder.Entity<Session>(entity =>
         {
+            entity.ToTable("Sessions", "UserManagement");
             entity.HasKey(e => e.Id);
             entity.HasIndex(e => e.RefreshToken).IsUnique();
             entity.HasIndex(e => e.UserId);
@@ -101,28 +130,46 @@ public class UserManagementDbContext : DbContext
         // UserPreference entity configuration
         modelBuilder.Entity<UserPreference>(entity =>
         {
+            entity.ToTable("UserPreferences", "UserManagement");
             entity.HasKey(e => e.Id);
             entity.HasIndex(e => e.UserId).IsUnique();
             entity.HasOne(e => e.User)
-                .WithMany(u => u.UserPreferences)
-                .HasForeignKey(e => e.UserId)
+                .WithOne(u => u.UserPreference)
+                .HasForeignKey<UserPreference>(e => e.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+                
+            entity.HasOne(e => e.Language)
+                  .WithMany()
+                  .HasForeignKey(e => e.LanguageId)
+                  .OnDelete(DeleteBehavior.Restrict);
+                  
+            entity.HasOne(e => e.Currency)
+                  .WithMany()
+                  .HasForeignKey(e => e.CurrencyId)
+                  .OnDelete(DeleteBehavior.Restrict);
         });
 
         // UserDocument entity configuration
         modelBuilder.Entity<UserDocument>(entity =>
         {
+            entity.ToTable("UserDocuments", "UserManagement");
             entity.HasKey(e => e.Id);
             entity.HasIndex(e => e.UserId);
             entity.HasOne(e => e.User)
                 .WithMany(u => u.UserDocuments)
                 .HasForeignKey(e => e.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+                
+            entity.HasOne(e => e.DocumentType)
+                  .WithMany()
+                  .HasForeignKey(e => e.DocumentTypeId)
+                  .OnDelete(DeleteBehavior.Restrict);
         });
 
         // InsurancePolicy entity configuration
         modelBuilder.Entity<InsurancePolicy>(entity =>
         {
+            entity.ToTable("InsurancePolicies", "UserManagement");
             entity.HasKey(e => e.Id);
             entity.HasIndex(e => e.UserId);
             entity.Property(e => e.CoverageAmount).HasPrecision(18, 2);
@@ -135,6 +182,7 @@ public class UserManagementDbContext : DbContext
         // AuditLog entity configuration
         modelBuilder.Entity<AuditLog>(entity =>
         {
+            entity.ToTable("AuditLogs", "UserManagement");
             entity.HasKey(e => e.Id);
             entity.HasIndex(e => e.UserId);
             entity.HasIndex(e => new { e.Resource, e.ResourceId });
@@ -148,57 +196,10 @@ public class UserManagementDbContext : DbContext
         // Notification entity configuration
         modelBuilder.Entity<Notification>(entity =>
         {
+            entity.ToTable("Notifications", "UserManagement");
             entity.HasKey(e => e.Id);
             entity.HasIndex(e => e.UserId);
             entity.HasIndex(e => new { e.Status, e.ScheduledFor });
         });
-
-        // NotificationTemplate entity configuration
-        modelBuilder.Entity<NotificationTemplate>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.HasIndex(e => new { e.Name, e.Language }).IsUnique();
-        });
-
-        // NotificationSchedule entity configuration
-        modelBuilder.Entity<NotificationSchedule>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.HasIndex(e => e.UserId);
-            entity.HasIndex(e => new { e.IsSent, e.ScheduledFor });
-        });
-
-        // Seed initial data
-        SeedData(modelBuilder);
-    }
-
-    private void SeedData(ModelBuilder modelBuilder)
-    {
-        // Seed Roles
-        var patientRoleId = Guid.Parse("00000000-0000-0000-0000-000000000001");
-        var doctorRoleId = Guid.Parse("00000000-0000-0000-0000-000000000002");
-        var hospitalAdminRoleId = Guid.Parse("00000000-0000-0000-0000-000000000003");
-        var supportRoleId = Guid.Parse("00000000-0000-0000-0000-000000000004");
-
-        modelBuilder.Entity<Role>().HasData(
-            new Role { Id = patientRoleId, Name = "patient", Description = "Patient user role" },
-            new Role { Id = doctorRoleId, Name = "doctor", Description = "Doctor user role" },
-            new Role { Id = hospitalAdminRoleId, Name = "hospital_admin", Description = "Hospital administrator role" },
-            new Role { Id = supportRoleId, Name = "support", Description = "Support staff role" }
-        );
-
-        // Seed Permissions
-        var permissions = new List<Permission>
-        {
-            new() { Id = Guid.NewGuid(), Name = "View Profile", Resource = "profile", Action = "read" },
-            new() { Id = Guid.NewGuid(), Name = "Edit Profile", Resource = "profile", Action = "update" },
-            new() { Id = Guid.NewGuid(), Name = "Book Appointment", Resource = "appointment", Action = "create" },
-            new() { Id = Guid.NewGuid(), Name = "View Appointments", Resource = "appointment", Action = "read" },
-            new() { Id = Guid.NewGuid(), Name = "Cancel Appointment", Resource = "appointment", Action = "delete" },
-            new() { Id = Guid.NewGuid(), Name = "Send Message", Resource = "message", Action = "create" },
-            new() { Id = Guid.NewGuid(), Name = "View Messages", Resource = "message", Action = "read" }
-        };
-
-        modelBuilder.Entity<Permission>().HasData(permissions);
     }
 }

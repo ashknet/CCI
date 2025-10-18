@@ -53,8 +53,9 @@ public class AuthService : IAuthService
             Gender = request.Gender,
             Nationality = request.Nationality,
             PassportNumber = request.PassportNumber ?? string.Empty,
-            Country = request.Country,
-            City = request.City,
+            // TODO: Handle Country and City - need to resolve by name/ID
+            // CountryId = await _countryRepository.GetIdByNameAsync(request.Country),
+            // CityId = await _cityRepository.GetIdByNameAsync(request.City),
             Address = request.Address ?? string.Empty,
             PostalCode = request.PostalCode ?? string.Empty,
             IsActive = true,
@@ -77,12 +78,13 @@ public class AuthService : IAuthService
         {
             Id = Guid.NewGuid(),
             UserId = user.Id,
-            PreferredLanguage = "en",
-            PreferredCurrency = "USD",
+            // TODO: Handle Language and Currency - need to resolve by name/ID
+            // LanguageId = await _languageRepository.GetIdByNameAsync("en"),
+            // CurrencyId = await _currencyRepository.GetIdByNameAsync("USD"),
             EmailNotifications = true,
             SmsNotifications = true,
             PushNotifications = true,
-            TimeZone = "UTC"
+            Theme = "light"
         };
         await _preferenceRepository.CreateAsync(preferences);
 
@@ -172,10 +174,11 @@ public class AuthService : IAuthService
             user.LastName = request.LastName;
         if (!string.IsNullOrEmpty(request.Phone))
             user.Phone = request.Phone;
-        if (!string.IsNullOrEmpty(request.Country))
-            user.Country = request.Country;
-        if (!string.IsNullOrEmpty(request.City))
-            user.City = request.City;
+        // TODO: Handle Country and City updates - need to resolve by name/ID
+        // if (!string.IsNullOrEmpty(request.Country))
+        //     user.CountryId = await _countryRepository.GetIdByNameAsync(request.Country);
+        // if (!string.IsNullOrEmpty(request.City))
+        //     user.CityId = await _cityRepository.GetIdByNameAsync(request.City);
         if (!string.IsNullOrEmpty(request.Address))
             user.Address = request.Address;
         if (!string.IsNullOrEmpty(request.PostalCode))
@@ -219,8 +222,9 @@ public class AuthService : IAuthService
 
         var additionalClaims = new Dictionary<string, string>
         {
-            { "Country", user.Country },
-            { "City", user.City }
+            // TODO: Add Country and City names from navigation properties
+            // { "Country", user.Country?.Name ?? "" },
+            // { "City", user.City?.Name ?? "" }
         };
 
         var accessToken = _jwtService.GenerateToken(user.Id.ToString(), user.Email, primaryRole, additionalClaims);
@@ -259,8 +263,8 @@ public class AuthService : IAuthService
             user.DateOfBirth,
             user.Gender,
             user.Nationality,
-            user.Country,
-            user.City,
+            user.Country?.Name ?? "",
+            user.City?.Name ?? "",
             user.Address,
             user.PostalCode,
             user.PassportNumber,

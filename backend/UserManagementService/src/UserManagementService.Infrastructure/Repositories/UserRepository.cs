@@ -19,7 +19,7 @@ public class UserRepository : IUserRepository
         return await _context.Users
             .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
-            .Include(u => u.UserPreferences)
+            .Include(u => u.UserPreference)
             .FirstOrDefaultAsync(u => u.Id == id);
     }
 
@@ -28,7 +28,7 @@ public class UserRepository : IUserRepository
         return await _context.Users
             .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
-            .Include(u => u.UserPreferences)
+            .Include(u => u.UserPreference)
             .FirstOrDefaultAsync(u => u.Email == email.ToLower());
     }
 

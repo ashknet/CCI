@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using HospitalService.Core.DTOs;
 using HospitalService.Core.Interfaces;
-using HospitalService.Core.Models;
+using MedTravel.Shared.Models;
 
 namespace HospitalService.Api.Controllers.V1;
 
@@ -48,7 +48,7 @@ public class CitiesController : ControllerBase
             {
                 return NotFound(ApiResponse<CityHospitalsDto>.ErrorResponse(
                     "CITY_NOT_FOUND", 
-                    $"City with ID {cityId} not found", 
+                    new List<string> { $"City with ID {cityId} not found" }, 
                     correlationId));
             }
 
@@ -62,7 +62,7 @@ public class CitiesController : ControllerBase
             _logger.LogError(ex, "Error retrieving hospitals for city ID {CityId}", cityId);
             return StatusCode(500, ApiResponse<CityHospitalsDto>.ErrorResponse(
                 "INTERNAL_ERROR", 
-                "An error occurred while retrieving city hospitals", 
+                new List<string> { "An error occurred while retrieving city hospitals" }, 
                 correlationId));
         }
     }
@@ -72,7 +72,7 @@ public class CitiesController : ControllerBase
     /// </summary>
     [HttpGet]
     [AllowAnonymous]
-    public async Task<ActionResult<ApiResponse<PagedResult<CityDto>>>> GetCities(
+    public async Task<ActionResult<ApiResponse<MedTravel.Shared.Models.PagedResult<CityDto>>>> GetCities(
         [FromQuery] string? country = null,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 50)
@@ -86,7 +86,7 @@ public class CitiesController : ControllerBase
 
             var cities = await _cityService.GetCitiesAsync(country, page, pageSize);
 
-            return Ok(ApiResponse<PagedResult<CityDto>>.SuccessResponse(
+            return Ok(ApiResponse<MedTravel.Shared.Models.PagedResult<CityDto>>.SuccessResponse(
                 cities, 
                 "Cities retrieved successfully", 
                 correlationId));
@@ -94,9 +94,9 @@ public class CitiesController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving cities");
-            return StatusCode(500, ApiResponse<PagedResult<CityDto>>.ErrorResponse(
+            return StatusCode(500, ApiResponse<MedTravel.Shared.Models.PagedResult<CityDto>>.ErrorResponse(
                 "INTERNAL_ERROR", 
-                "An error occurred while retrieving cities", 
+                new List<string> { "An error occurred while retrieving cities" }, 
                 correlationId));
         }
     }
@@ -117,7 +117,7 @@ public class CitiesController : ControllerBase
             {
                 return NotFound(ApiResponse<CityDto>.ErrorResponse(
                     "CITY_NOT_FOUND", 
-                    $"City with ID {cityId} not found", 
+                    new List<string> { $"City with ID {cityId} not found" }, 
                     correlationId));
             }
 
@@ -131,7 +131,7 @@ public class CitiesController : ControllerBase
             _logger.LogError(ex, "Error retrieving city ID {CityId}", cityId);
             return StatusCode(500, ApiResponse<CityDto>.ErrorResponse(
                 "INTERNAL_ERROR", 
-                "An error occurred while retrieving city", 
+                new List<string> { "An error occurred while retrieving city" }, 
                 correlationId));
         }
     }

@@ -34,9 +34,9 @@ public class HospitalsController : ControllerBase
 
         var dto = new HospitalDto(
             hospital.Id, hospital.Name, hospital.Description, hospital.Address,
-            hospital.City, hospital.State, hospital.Country, hospital.Latitude,
-            hospital.Longitude, hospital.Phone, hospital.Email, hospital.Website,
-            hospital.BedCapacity, hospital.AverageRating, hospital.TotalReviews,
+            hospital.City?.Name ?? "", hospital.City?.State ?? "", hospital.Country?.Name ?? "",
+            hospital.Latitude, hospital.Longitude, hospital.Phone, hospital.Email, hospital.Website,
+            hospital.BedCapacity, hospital.YearEstablished, hospital.AverageRating, hospital.TotalReviews,
             new List<string>(), new List<string>()
         );
 
@@ -48,23 +48,24 @@ public class HospitalsController : ControllerBase
     /// </summary>
     [HttpGet("{id}/reviews")]
     [AllowAnonymous]
-    public async Task<ActionResult<ApiResponse<PagedResult<ReviewDto>>>> GetReviews(
+    public async Task<ActionResult<ApiResponse<MedTravel.Shared.Models.PagedResult<ReviewDto>>>> GetReviews(
         Guid id, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 20)
     {
         var correlationId = HttpContext.Items["CorrelationId"]?.ToString();
         var reviews = await _reviewRepository.GetByEntityAsync("hospital", id, pageNumber, pageSize);
 
-        var result = new PagedResult<ReviewDto>
+        var result = new MedTravel.Shared.Models.PagedResult<ReviewDto>
         {
             Items = reviews.Select(r => new ReviewDto(
-                r.Id, "hospital", id, r.UserId, r.Rating, r.Comment, r.IsVerified, r.CreatedAt
+                r.Id, r.HospitalId, r.DoctorId, r.PatientId, r.Rating, r.Title, r.Comment, 
+                r.TreatmentDate, r.IsVerified, r.IsApproved, r.CreatedAt
             )).ToList(),
             PageNumber = pageNumber,
             PageSize = pageSize,
             TotalCount = reviews.Count()
         };
 
-        return Ok(ApiResponse<PagedResult<ReviewDto>>.SuccessResponse(result, null, correlationId));
+        return Ok(ApiResponse<MedTravel.Shared.Models.PagedResult<ReviewDto>>.SuccessResponse(result, null, correlationId));
     }
 
     /// <summary>
@@ -81,14 +82,17 @@ public class HospitalsController : ControllerBase
         {
             Id = Guid.NewGuid(),
             HospitalId = id,
-            UserId = userId,
+            PatientId = userId,
             Rating = request.Rating,
+            Title = request.Title,
             Comment = request.Comment,
             IsVerified = false
         };
 
         var created = await _reviewRepository.CreateAsync(review);
-        var dto = new ReviewDto(created.Id, "hospital", id, userId, created.Rating, created.Comment, created.IsVerified, created.CreatedAt);
+        var dto = new ReviewDto(created.Id, created.HospitalId, created.DoctorId, created.PatientId, 
+            created.Rating, created.Title, created.Comment, created.TreatmentDate, 
+            created.IsVerified, created.IsApproved, created.CreatedAt);
 
         return Ok(ApiResponse<ReviewDto>.SuccessResponse(dto, "Review added successfully", correlationId));
     }
@@ -109,10 +113,13 @@ public class HospitalsController : ControllerBase
         var departments = hospital.Departments.Select(d => new
         {
             d.Id,
-            d.Name,
-            d.Description,
+            SpecialtyName = d.Specialty.Name,
+            SpecialtyDescription = d.Specialty.Description,
             d.HeadOfDepartment,
-            d.IsActive
+            d.Phone,
+            d.Email,
+            d.FloorNumber,
+            d.BedCount
         }).ToList<object>();
 
         return Ok(ApiResponse<List<object>>.SuccessResponse(departments, null, correlationId));
@@ -134,11 +141,13 @@ public class HospitalsController : ControllerBase
         var accreditations = hospital.Accreditations.Select(a => new
         {
             a.Id,
-            a.Name,
-            a.IssuingBody,
-            a.IssueDate,
+            AccreditationType = a.AccreditationType,
+            AccreditationBodyName = a.AccreditationBody.Name,
+            a.CertificateNumber,
+            IssuedDate = a.IssuedDate,
             a.ExpiryDate,
-            a.CertificateUrl
+            a.Status,
+            DocumentUrl = a.DocumentUrl
         }).ToList<object>();
 
         return Ok(ApiResponse<List<object>>.SuccessResponse(accreditations, null, correlationId));

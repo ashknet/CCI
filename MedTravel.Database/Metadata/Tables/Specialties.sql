@@ -10,6 +10,8 @@
 );
 
 
+
+
 GO
 CREATE UNIQUE NONCLUSTERED INDEX [IX_Metadata_Specialties_Name]
     ON [Metadata].[Specialties]([Name] ASC);
@@ -18,4 +20,10 @@ CREATE UNIQUE NONCLUSTERED INDEX [IX_Metadata_Specialties_Name]
 GO
 CREATE NONCLUSTERED INDEX [IX_Metadata_Specialties_Category]
     ON [Metadata].[Specialties]([Category] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_Specialties_Search]
+    ON [Metadata].[Specialties]([Name] ASC)
+    INCLUDE([Id], [Description], [Category]);
 

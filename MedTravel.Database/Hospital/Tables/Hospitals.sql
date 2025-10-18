@@ -24,6 +24,8 @@
 );
 
 
+
+
 GO
 CREATE NONCLUSTERED INDEX [IX_Hospital_Hospitals_City]
     ON [Hospital].[Hospitals]([CityId] ASC);
@@ -32,4 +34,10 @@ CREATE NONCLUSTERED INDEX [IX_Hospital_Hospitals_City]
 GO
 CREATE NONCLUSTERED INDEX [IX_Hospital_Hospitals_Name]
     ON [Hospital].[Hospitals]([Name] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_Hospitals_Search]
+    ON [Hospital].[Hospitals]([Name] ASC, [IsActive] ASC)
+    INCLUDE([Id], [Description], [Address], [AverageRating]);
 

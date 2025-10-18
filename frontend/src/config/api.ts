@@ -79,6 +79,15 @@ export const API_ENDPOINTS = {
     DOCTORS: '/search/doctors',
   },
   
+  // Selection Flow APIs
+  SELECTION: {
+    DOCTOR: '/selection/doctors',
+    HOSPITAL: '/selection/hospitals',
+    CITY: '/selection/cities',
+    DISEASE: '/selection/diseases',
+    SPECIALTIES: '/selection/specialties',
+  },
+  
   // Health Check (note: health endpoint is not under /api/v1)
   HEALTH: 'https://localhost:64685/health',
 } as const;

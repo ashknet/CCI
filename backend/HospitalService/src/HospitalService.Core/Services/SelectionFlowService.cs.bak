@@ -1,0 +1,559 @@
+using HospitalService.Core.DTOs;
+using HospitalService.Core.Entities;
+using HospitalService.Core.Interfaces;
+using MedTravel.Shared.Models;
+
+namespace HospitalService.Core.Services;
+
+public class SelectionFlowService : ISelectionFlowService
+{
+    private readonly ISelectionFlowRepository _repository;
+
+    public SelectionFlowService(ISelectionFlowRepository repository)
+    {
+        _repository = repository;
+    }
+
+    // Doctor Selection Flow
+    public async Task<DoctorSelectionDto?> GetDoctorSelectionAsync(Guid doctorId, DoctorSelectionRequest request)
+    {
+        try
+        {
+            var doctor = await _repository.GetDoctorWithDetailsAsync(doctorId);
+            if (doctor == null) return null;
+
+            var availability = await GetDoctorAvailabilityAsync(doctorId, request.StartDate, request.EndDate);
+            
+            var recentReviews = new List<ReviewDto>();
+            if (request.IncludeReviews)
+            {
+                var reviews = await _repository.GetDoctorReviewsAsync(doctorId, request.ReviewLimit);
+                recentReviews = reviews.Select(MapToReviewDto).ToList();
+            }
+
+            return new DoctorSelectionDto
+            {
+                Doctor = MapToDoctorProfileDto(doctor),
+                Availability = availability,
+                RecentReviews = recentReviews
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting doctor selection for doctor {DoctorId}", doctorId);
+            throw;
+        }
+    }
+
+    public async Task<AppointmentAvailabilityDto> GetDoctorAvailabilityAsync(Guid doctorId, DateTime? startDate, DateTime? endDate)
+    {
+        try
+        {
+            var start = startDate ?? DateTime.Today;
+            var end = endDate ?? DateTime.Today.AddDays(30);
+            
+            var availability = await _repository.GetDoctorAvailabilityAsync(doctorId);
+            var appointments = await _repository.GetDoctorAppointmentsAsync(doctorId, start, end);
+
+            var availableSlots = new List<DateAvailabilityDto>();
+            var currentDate = start.Date;
+
+            while (currentDate <= end.Date)
+            {
+                var dayOfWeek = (int)currentDate.DayOfWeek;
+                var dayAvailability = availability.FirstOrDefault(a => a.DayOfWeek == dayOfWeek);
+                
+                if (dayAvailability != null)
+                {
+                    var timeSlots = GenerateTimeSlots(dayAvailability, appointments.Where(a => a.ScheduledDate.Date == currentDate).ToList());
+                    if (timeSlots.Any())
+                    {
+                        availableSlots.Add(new DateAvailabilityDto
+                        {
+                            Date = currentDate,
+                            TimeSlots = timeSlots
+                        });
+                    }
+                }
+
+                currentDate = currentDate.AddDays(1);
+            }
+
+            return new AppointmentAvailabilityDto
+            {
+                DoctorId = doctorId,
+                AvailableSlots = availableSlots,
+                TimeZone = "UTC", // This should be configurable
+                WorkingHours = availability.ToDictionary(a => GetDayName(a.DayOfWeek), a => $"{a.StartTime:hh\\:mm} - {a.EndTime:hh\\:mm}")
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting doctor availability for doctor {DoctorId}", doctorId);
+            throw;
+        }
+    }
+
+    // Hospital Selection Flow
+    public async Task<HospitalSelectionDto?> GetHospitalSelectionAsync(Guid hospitalId, HospitalSelectionRequest request)
+    {
+        try
+        {
+            var hospital = await _repository.GetHospitalWithDetailsAsync(hospitalId);
+            if (hospital == null) return null;
+
+            var doctors = await GetHospitalDoctorsAsync(hospitalId, request);
+            var specialties = await _repository.GetHospitalSpecialtiesAsync(hospitalId);
+
+            return new HospitalSelectionDto
+            {
+                Hospital = MapToHospitalProfileDto(hospital),
+                Doctors = doctors,
+                AvailableSpecialties = specialties.Select(MapToSpecialtyDto).ToList()
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting hospital selection for hospital {HospitalId}", hospitalId);
+            throw;
+        }
+    }
+
+    public async Task<PagedResult<DoctorSummaryDto>> GetHospitalDoctorsAsync(Guid hospitalId, HospitalSelectionRequest request)
+    {
+        try
+        {
+            var doctors = await _repository.GetHospitalDoctorsAsync(
+                hospitalId, 
+                request.Page, 
+                request.PageSize, 
+                request.Specialty, 
+                request.SortBy);
+
+            var doctorSummaries = doctors.Items.Select(async doctor =>
+            {
+                var summary = MapToDoctorSummaryDto(doctor);
+                
+                if (request.IncludeAvailability)
+                {
+                    summary.HasAvailability = await _repository.GetNextAvailableSlotAsync(doctor.Id) != null;
+                    summary.NextAvailableSlot = await _repository.GetNextAvailableSlotAsync(doctor.Id);
+                }
+
+                return summary;
+            });
+
+            var results = await Task.WhenAll(doctorSummaries);
+
+            return new PagedResult<DoctorSummaryDto>
+            {
+                Items = results,
+                TotalCount = doctors.TotalCount,
+                PageNumber = doctors.PageNumber,
+                PageSize = doctors.PageSize,
+                TotalPages = doctors.TotalPages
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting hospital doctors for hospital {HospitalId}", hospitalId);
+            throw;
+        }
+    }
+
+    // City Selection Flow
+    public async Task<CitySelectionDto?> GetCitySelectionAsync(Guid cityId, CitySelectionRequest request)
+    {
+        try
+        {
+            var city = await _repository.GetCityWithDetailsAsync(cityId);
+            if (city == null) return null;
+
+            var hospitals = await GetCityHospitalsAsync(cityId, request);
+            var specialties = await _repository.GetCitySpecialtiesAsync(cityId);
+            var doctorCount = await _repository.GetCityDoctorCountAsync(cityId);
+
+            return new CitySelectionDto
+            {
+                City = MapToCityDto(city),
+                Hospitals = hospitals,
+                AvailableSpecialties = specialties.Select(MapToSpecialtyDto).ToList(),
+                TotalDoctors = doctorCount
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting city selection for city {CityId}", cityId);
+            throw;
+        }
+    }
+
+    public async Task<PagedResult<HospitalSummaryDto>> GetCityHospitalsAsync(Guid cityId, CitySelectionRequest request)
+    {
+        try
+        {
+            var hospitals = await _repository.GetCityHospitalsAsync(
+                cityId, 
+                request.Page, 
+                request.PageSize, 
+                request.Specialty, 
+                request.SortBy, 
+                request.MaxDistance);
+
+            var hospitalSummaries = hospitals.Items.Select(MapToHospitalSummaryDto);
+
+            return new PagedResult<HospitalSummaryDto>
+            {
+                Items = hospitalSummaries,
+                TotalCount = hospitals.TotalCount,
+                PageNumber = hospitals.PageNumber,
+                PageSize = hospitals.PageSize,
+                TotalPages = hospitals.TotalPages
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting city hospitals for city {CityId}", cityId);
+            throw;
+        }
+    }
+
+    // Disease Selection Flow
+    public async Task<DiseaseSelectionDto?> GetDiseaseSelectionAsync(Guid diseaseId, DiseaseSelectionRequest request)
+    {
+        try
+        {
+            var disease = await _repository.GetDiseaseWithDetailsAsync(diseaseId);
+            if (disease == null) return null;
+
+            var doctors = await GetDiseaseDoctorsAsync(diseaseId, request);
+            var specialties = await _repository.GetDiseaseSpecialtiesAsync(diseaseId);
+            var topHospitals = await _repository.GetDiseaseTopHospitalsAsync(diseaseId, 5);
+
+            return new DiseaseSelectionDto
+            {
+                Disease = MapToDiseaseDto(disease),
+                Doctors = doctors,
+                RelatedSpecialties = specialties.Select(MapToSpecialtyDto).ToList(),
+                TopHospitals = topHospitals.Select(MapToHospitalSummaryDto).ToList()
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting disease selection for disease {DiseaseId}", diseaseId);
+            throw;
+        }
+    }
+
+    public async Task<PagedResult<DoctorSelectionSummaryDto>> GetDiseaseDoctorsAsync(Guid diseaseId, DiseaseSelectionRequest request)
+    {
+        try
+        {
+            var doctors = await _repository.GetDiseaseDoctorsAsync(
+                diseaseId, 
+                request.CityId, 
+                request.Page, 
+                request.PageSize, 
+                request.Specialty, 
+                request.SortBy);
+
+            var doctorSummaries = doctors.Items.Select(async doctor =>
+            {
+                var summary = MapToDoctorSelectionSummaryDto(doctor);
+                
+                if (request.IncludeAvailability)
+                {
+                    summary.HasAvailability = await _repository.GetNextAvailableSlotAsync(doctor.Id) != null;
+                    summary.NextAvailableSlot = await _repository.GetNextAvailableSlotAsync(doctor.Id);
+                }
+
+                return summary;
+            });
+
+            var results = await Task.WhenAll(doctorSummaries);
+
+            return new PagedResult<DoctorSelectionSummaryDto>
+            {
+                Items = results,
+                TotalCount = doctors.TotalCount,
+                PageNumber = doctors.PageNumber,
+                PageSize = doctors.PageSize,
+                TotalPages = doctors.TotalPages
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting disease doctors for disease {DiseaseId}", diseaseId);
+            throw;
+        }
+    }
+
+    // Common helper methods
+    public async Task<List<SpecialtyDto>> GetAvailableSpecialtiesAsync(Guid? cityId = null, Guid? hospitalId = null)
+    {
+        try
+        {
+            var specialties = await _repository.GetAvailableSpecialtiesAsync(cityId, hospitalId);
+            return specialties.Select(MapToSpecialtyDto).ToList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting available specialties");
+            throw;
+        }
+    }
+
+    public async Task<bool> CheckDoctorAvailabilityAsync(Guid doctorId, DateTime date, TimeSpan time)
+    {
+        try
+        {
+            return await _repository.CheckDoctorAvailabilityAsync(doctorId, date, time);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error checking doctor availability");
+            throw;
+        }
+    }
+
+    public async Task<DateTime?> GetNextAvailableSlotAsync(Guid doctorId)
+    {
+        try
+        {
+            return await _repository.GetNextAvailableSlotAsync(doctorId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting next available slot");
+            throw;
+        }
+    }
+
+    // Private helper methods
+    private List<TimeSlotDto> GenerateTimeSlots(DoctorAvailability availability, List<Appointment> appointments)
+    {
+        var slots = new List<TimeSlotDto>();
+        var currentTime = availability.StartTime;
+        var slotId = 1;
+
+        while (currentTime.Add(TimeSpan.FromMinutes(availability.SlotDurationMinutes)) <= availability.EndTime)
+        {
+            var endTime = currentTime.Add(TimeSpan.FromMinutes(availability.SlotDurationMinutes));
+            var isBooked = appointments.Any(a => a.ScheduledTime >= currentTime && a.ScheduledTime < endTime);
+
+            slots.Add(new TimeSlotDto
+            {
+                Time = currentTime,
+                Duration = availability.SlotDurationMinutes,
+                IsAvailable = !isBooked,
+                SlotId = Guid.NewGuid() // In real implementation, this should be a proper slot ID
+            });
+
+            currentTime = endTime;
+        }
+
+        return slots;
+    }
+
+    private string GetDayName(int dayOfWeek)
+    {
+        return dayOfWeek switch
+        {
+            0 => "Sunday",
+            1 => "Monday",
+            2 => "Tuesday",
+            3 => "Wednesday",
+            4 => "Thursday",
+            5 => "Friday",
+            6 => "Saturday",
+            _ => "Unknown"
+        };
+    }
+
+    // Mapping methods
+    private DoctorProfileDto MapToDoctorProfileDto(Doctor doctor)
+    {
+        return new DoctorProfileDto
+        {
+            Id = doctor.Id,
+            FirstName = doctor.FirstName,
+            LastName = doctor.LastName,
+            Email = doctor.Email,
+            Phone = doctor.Phone ?? string.Empty,
+            Qualification = doctor.Qualification ?? string.Empty,
+            YearsOfExperience = doctor.YearsOfExperience ?? 0,
+            Biography = doctor.Biography ?? string.Empty,
+            ProfileImageUrl = doctor.ProfileImageUrl,
+            ConsultationFee = doctor.ConsultationFee ?? 0,
+            AverageRating = doctor.AverageRating,
+            TotalReviews = doctor.TotalReviews,
+            IsAcceptingPatients = doctor.IsAcceptingPatients ?? true,
+            Hospital = MapToHospitalSummaryDto(doctor.Hospital),
+            Specialties = doctor.DoctorSpecialties.Select(ds => new DoctorSpecialtyDto
+            {
+                Id = ds.Specialty.Id,
+                Name = ds.Specialty.Name,
+                Description = ds.Specialty.Description ?? string.Empty,
+                Category = ds.Specialty.Category ?? string.Empty,
+                IsPrimary = ds.IsPrimary,
+                YearsOfExperience = ds.YearsOfExperience
+            }).ToList(),
+            Languages = doctor.DoctorLanguages.Select(dl => new LanguageDto
+            {
+                Id = dl.Language.Id,
+                Name = dl.Language.Name,
+                Code = dl.Language.Code ?? string.Empty,
+                ProficiencyLevel = dl.ProficiencyLevel
+            }).ToList(),
+            Credentials = doctor.Credentials.Select(c => new CredentialDto
+            {
+                Id = c.Id,
+                Name = c.Name,
+                IssuingOrganization = c.IssuingOrganization ?? string.Empty,
+                IssueDate = c.IssueDate,
+                ExpiryDate = c.ExpiryDate
+            }).ToList(),
+            Reviews = new List<ReviewDto>() // Will be populated separately if needed
+        };
+    }
+
+    private DoctorSummaryDto MapToDoctorSummaryDto(Doctor doctor)
+    {
+        return new DoctorSummaryDto
+        {
+            Id = doctor.Id,
+            FirstName = doctor.FirstName,
+            LastName = doctor.LastName,
+            Qualification = doctor.Qualification ?? string.Empty,
+            YearsOfExperience = doctor.YearsOfExperience ?? 0,
+            ConsultationFee = doctor.ConsultationFee ?? 0,
+            AverageRating = doctor.AverageRating,
+            TotalReviews = doctor.TotalReviews,
+            IsAcceptingPatients = doctor.IsAcceptingPatients ?? true,
+            ProfileImageUrl = doctor.ProfileImageUrl,
+            Specialties = doctor.DoctorSpecialties.Select(ds => MapToSpecialtyDto(ds.Specialty)).ToList()
+        };
+    }
+
+    private DoctorSelectionSummaryDto MapToDoctorSelectionSummaryDto(Doctor doctor)
+    {
+        return new DoctorSelectionSummaryDto
+        {
+            Id = doctor.Id,
+            FirstName = doctor.FirstName,
+            LastName = doctor.LastName,
+            Qualification = doctor.Qualification ?? string.Empty,
+            YearsOfExperience = doctor.YearsOfExperience ?? 0,
+            ConsultationFee = doctor.ConsultationFee ?? 0,
+            AverageRating = doctor.AverageRating,
+            TotalReviews = doctor.TotalReviews,
+            IsAcceptingPatients = doctor.IsAcceptingPatients ?? true,
+            ProfileImageUrl = doctor.ProfileImageUrl,
+            Hospital = MapToHospitalSummaryDto(doctor.Hospital),
+            Specialties = doctor.DoctorSpecialties.Select(ds => MapToSpecialtyDto(ds.Specialty)).ToList(),
+            Languages = doctor.DoctorLanguages.Select(dl => new LanguageDto
+            {
+                Id = dl.Language.Id,
+                Name = dl.Language.Name,
+                Code = dl.Language.Code ?? string.Empty,
+                ProficiencyLevel = dl.ProficiencyLevel
+            }).ToList(),
+            HasAvailability = false, // Will be set by caller
+            NextAvailableSlot = null // Will be set by caller
+        };
+    }
+
+    private HospitalProfileDto MapToHospitalProfileDto(Hospital hospital)
+    {
+        return new HospitalProfileDto
+        {
+            Id = hospital.Id,
+            Name = hospital.Name,
+            Description = hospital.Description ?? string.Empty,
+            Address = hospital.Address,
+            City = hospital.City?.Name ?? string.Empty,
+            State = hospital.City?.State ?? string.Empty,
+            Country = hospital.City?.Country?.Name ?? string.Empty,
+            PostalCode = hospital.PostalCode ?? string.Empty,
+            Latitude = hospital.Latitude ?? 0,
+            Longitude = hospital.Longitude ?? 0,
+            Phone = hospital.Phone ?? string.Empty,
+            Email = hospital.Email ?? string.Empty,
+            Website = hospital.Website ?? string.Empty,
+            BedCapacity = hospital.BedCapacity ?? 0,
+            YearEstablished = hospital.YearEstablished ?? 0,
+            AverageRating = hospital.AverageRating,
+            TotalReviews = hospital.TotalReviews,
+            IsActive = hospital.IsActive ?? true,
+            Specialties = hospital.Departments.Select(d => MapToSpecialtyDto(d.Specialty)).ToList(),
+            Amenities = new List<string>(), // This would need to be populated from a separate table
+            Reviews = new List<ReviewDto>() // This would need to be populated from a separate table
+        };
+    }
+
+    private HospitalSummaryDto MapToHospitalSummaryDto(Hospital hospital)
+    {
+        return new HospitalSummaryDto
+        {
+            Id = hospital.Id,
+            Name = hospital.Name,
+            Address = hospital.Address,
+            City = hospital.City?.Name ?? string.Empty,
+            Phone = hospital.Phone ?? string.Empty,
+            AverageRating = hospital.AverageRating,
+            TotalReviews = hospital.TotalReviews,
+            BedCapacity = hospital.BedCapacity ?? 0,
+            Specialties = hospital.Departments.Select(d => MapToSpecialtyDto(d.Specialty)).ToList(),
+            DistanceFromCityCenter = null // This would need to be calculated
+        };
+    }
+
+    private CityDto MapToCityDto(City city)
+    {
+        return new CityDto
+        {
+            Id = city.Id,
+            Name = city.Name,
+            State = city.State ?? string.Empty,
+            Country = city.Country?.Name ?? string.Empty
+        };
+    }
+
+    private DiseaseDto MapToDiseaseDto(Disease disease)
+    {
+        return new DiseaseDto
+        {
+            Id = disease.Id,
+            Name = disease.Name,
+            Category = disease.Category ?? string.Empty,
+            Description = disease.Description ?? string.Empty,
+            Symptoms = disease.Symptoms ?? string.Empty,
+            TreatmentOptions = disease.TreatmentOptions ?? string.Empty
+        };
+    }
+
+    private SpecialtyDto MapToSpecialtyDto(Specialty specialty)
+    {
+        return new SpecialtyDto
+        {
+            Id = specialty.Id,
+            Name = specialty.Name,
+            Description = specialty.Description ?? string.Empty,
+            Category = specialty.Category ?? string.Empty
+        };
+    }
+
+    private ReviewDto MapToReviewDto(Review review)
+    {
+        return new ReviewDto
+        {
+            Id = review.Id,
+            EntityType = review.EntityType,
+            EntityId = review.EntityId,
+            Rating = review.Rating,
+            Comment = review.Comment ?? string.Empty,
+            CreatedAt = review.CreatedAt,
+            UserId = review.UserId
+        };
+    }
+}

@@ -8,12 +8,13 @@ public record HospitalDto(
     string City,
     string State,
     string Country,
-    decimal Latitude,
-    decimal Longitude,
+    decimal? Latitude,
+    decimal? Longitude,
     string Phone,
     string Email,
     string Website,
-    int BedCapacity,
+    int? BedCapacity,
+    int? YearEstablished,
     decimal AverageRating,
     int TotalReviews,
     List<string> Specialties,
@@ -40,14 +41,6 @@ public record DoctorDto(
     List<CredentialDto> Credentials
 );
 
-public record CredentialDto(
-    string Type,
-    string Name,
-    string IssuingOrganization,
-    DateTime IssueDate,
-    DateTime? ExpiryDate,
-    bool IsVerified
-);
 
 public record SearchRequest(
     string Query,
@@ -67,19 +60,6 @@ public record SearchSuggestion(
     Guid? Id = null
 );
 
-public record AppointmentDto(
-    Guid Id,
-    Guid DoctorId,
-    string DoctorName,
-    Guid PatientId,
-    DateTime ScheduledDate,
-    TimeSpan ScheduledTime,
-    int DurationMinutes,
-    string Status,
-    string ReasonForVisit,
-    decimal Fee,
-    bool IsPaid
-);
 
 public record BookAppointmentRequest(
     Guid DoctorId,
@@ -95,20 +75,11 @@ public record AvailableSlotDto(
     bool IsAvailable
 );
 
-public record ReviewDto(
-    Guid Id,
-    string EntityType,
-    Guid EntityId,
-    Guid UserId,
-    int Rating,
-    string Comment,
-    bool IsVerified,
-    DateTime CreatedAt
-);
 
 public record CreateReviewRequest(
-    string EntityType, // hospital or doctor
-    Guid EntityId,
+    Guid? HospitalId,
+    Guid? DoctorId,
     int Rating,
-    string Comment
+    string? Title,
+    string? Comment
 );

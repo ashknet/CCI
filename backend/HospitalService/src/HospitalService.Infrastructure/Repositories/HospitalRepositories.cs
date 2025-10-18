@@ -14,23 +14,31 @@ public class HospitalRepository : IHospitalRepository
 
     public async Task<Hospital?> GetByIdAsync(Guid id) =>
         await _context.Hospitals
+            .Include(h => h.City)
+            .Include(h => h.Country)
             .Include(h => h.Departments)
+                .ThenInclude(d => d.Specialty)
             .Include(h => h.Accreditations)
+                .ThenInclude(a => a.AccreditationBody)
             .Include(h => h.Reviews)
             .FirstOrDefaultAsync(h => h.Id == id);
 
     public async Task<IEnumerable<Hospital>> SearchAsync(SearchRequest request)
     {
-        var query = _context.Hospitals.AsQueryable();
+        var query = _context.Hospitals
+            .Include(h => h.City)
+            .Include(h => h.Country)
+            .AsQueryable();
 
         if (!string.IsNullOrEmpty(request.Query))
         {
             query = query.Where(h => EF.Functions.Like(h.Name, $"%{request.Query}%") ||
-                                    EF.Functions.Like(h.City, $"%{request.Query}%"));
+                                    EF.Functions.Like(h.City.Name, $"%{request.Query}%") ||
+                                    EF.Functions.Like(h.Country.Name, $"%{request.Query}%"));
         }
 
         if (!string.IsNullOrEmpty(request.City))
-            query = query.Where(h => h.City == request.City);
+            query = query.Where(h => h.City.Name == request.City);
 
         return await query
             .OrderByDescending(h => h.AverageRating)
@@ -41,11 +49,15 @@ public class HospitalRepository : IHospitalRepository
 
     public async Task<int> GetSearchCountAsync(SearchRequest request)
     {
-        var query = _context.Hospitals.AsQueryable();
+        var query = _context.Hospitals
+            .Include(h => h.City)
+            .Include(h => h.Country)
+            .AsQueryable();
         if (!string.IsNullOrEmpty(request.Query))
         {
             query = query.Where(h => EF.Functions.Like(h.Name, $"%{request.Query}%") ||
-                                    EF.Functions.Like(h.City, $"%{request.Query}%"));
+                                    EF.Functions.Like(h.City.Name, $"%{request.Query}%") ||
+                                    EF.Functions.Like(h.Country.Name, $"%{request.Query}%"));
         }
         return await query.CountAsync();
     }
@@ -61,8 +73,9 @@ public class HospitalRepository : IHospitalRepository
             .ToListAsync();
 
         var cities = await _context.Hospitals
-            .Where(h => EF.Functions.Like(h.City, $"{query}%"))
-            .Select(h => h.City)
+            .Include(h => h.City)
+            .Where(h => EF.Functions.Like(h.City.Name, $"{query}%"))
+            .Select(h => h.City.Name)
             .Distinct()
             .Take(limit / 2)
             .Select(c => new SearchSuggestion(c, "location", null))
@@ -81,10 +94,10 @@ public class DoctorRepository : IDoctorRepository
     public async Task<Doctor?> GetByIdAsync(Guid id) =>
         await _context.Doctors
             .Include(d => d.Hospital)
-            .Include(d => d.Specialties).ThenInclude(ds => ds.Specialty)
-            .Include(d => d.Languages).ThenInclude(dl => dl.Language)
+            .Include(d => d.DoctorSpecialties).ThenInclude(ds => ds.Specialty)
+            .Include(d => d.DoctorLanguages).ThenInclude(dl => dl.Language)
             .Include(d => d.Credentials)
-            .Include(d => d.Availabilities)
+            .Include(d => d.Availability)
             .FirstOrDefaultAsync(d => d.Id == id);
 
     public async Task<IEnumerable<Doctor>> SearchAsync(SearchRequest request)
@@ -118,8 +131,8 @@ public class DoctorRepository : IDoctorRepository
 
     public async Task<IEnumerable<Doctor>> GetBySpecialtyAsync(string specialty) =>
         await _context.Doctors
-            .Include(d => d.Specialties).ThenInclude(ds => ds.Specialty)
-            .Where(d => d.Specialties.Any(s => s.Specialty.Name == specialty))
+            .Include(d => d.DoctorSpecialties).ThenInclude(ds => ds.Specialty)
+            .Where(d => d.DoctorSpecialties.Any(s => s.Specialty.Name == specialty))
             .ToListAsync();
 }
 
@@ -187,15 +200,16 @@ public class AppointmentRepository : IAppointmentRepository
         var slots = new List<AvailableSlotDto>();
         for (var date = startDate; date <= endDate; date = date.AddDays(1))
         {
-            var dayAvailability = availabilities.FirstOrDefault(a => a.DayOfWeek == date.DayOfWeek);
+            var dayAvailability = availabilities.FirstOrDefault(a => a.DayOfWeek == (int)date.DayOfWeek);
             if (dayAvailability != null)
             {
+                var slotDuration = dayAvailability.SlotDurationMinutes ?? 30;
                 var currentTime = dayAvailability.StartTime;
                 while (currentTime < dayAvailability.EndTime)
                 {
                     var isBooked = bookedSlots.Any(s => s.ScheduledDate.Date == date.Date && s.ScheduledTime == currentTime);
-                    slots.Add(new AvailableSlotDto(date, currentTime, currentTime.Add(TimeSpan.FromMinutes(dayAvailability.SlotDurationMinutes)), !isBooked));
-                    currentTime = currentTime.Add(TimeSpan.FromMinutes(dayAvailability.SlotDurationMinutes));
+                    slots.Add(new AvailableSlotDto(date, currentTime, currentTime.Add(TimeSpan.FromMinutes(slotDuration)), !isBooked));
+                    currentTime = currentTime.Add(TimeSpan.FromMinutes(slotDuration));
                 }
             }
         }

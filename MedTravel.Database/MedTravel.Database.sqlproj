@@ -129,5 +129,7 @@
     <Build Include="Security\TAService.sql" />
     <Build Include="Security\TestData.sql" />
     <Build Include="Security\UserManagement.sql" />
+    <Build Include="Hospital\Tables\DoctorDiseases.sql" />
+    <Build Include="Hospital\Stored Procedures\GetSearchSuggestions.sql" />
   </ItemGroup>
 </Project>

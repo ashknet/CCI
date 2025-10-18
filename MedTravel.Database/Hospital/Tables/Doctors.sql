@@ -21,6 +21,8 @@
 );
 
 
+
+
 GO
 CREATE NONCLUSTERED INDEX [IX_Hospital_Doctors_HospitalId]
     ON [Hospital].[Doctors]([HospitalId] ASC);
@@ -35,4 +37,10 @@ GO
 CREATE NONCLUSTERED INDEX [IX_Doctors_Search]
     ON [Hospital].[Doctors]([FirstName] ASC, [LastName] ASC, [IsActive] ASC)
     INCLUDE([Qualification], [Biography], [AverageRating]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_Doctors_Search_Enhanced]
+    ON [Hospital].[Doctors]([FirstName] ASC, [LastName] ASC, [IsActive] ASC, [IsAcceptingPatients] ASC)
+    INCLUDE([Id], [Qualification], [AverageRating], [ConsultationFee]);
 

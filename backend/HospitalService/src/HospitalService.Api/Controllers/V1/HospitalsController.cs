@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using HospitalService.Core.DTOs;
 using HospitalService.Core.Interfaces;
-using HospitalService.Core.Models;
+using MedTravel.Shared.Models;
 
 namespace HospitalService.Api.Controllers.V1;
 
@@ -39,7 +39,7 @@ public class HospitalsController : ControllerBase
             {
                 return NotFound(ApiResponse<HospitalProfileDto>.ErrorResponse(
                     "HOSPITAL_NOT_FOUND", 
-                    $"Hospital with ID {hospitalId} not found", 
+                    new List<string> { $"Hospital with ID {hospitalId} not found" }, 
                     correlationId));
             }
 
@@ -53,7 +53,7 @@ public class HospitalsController : ControllerBase
             _logger.LogError(ex, "Error retrieving hospital profile for ID {HospitalId}", hospitalId);
             return StatusCode(500, ApiResponse<HospitalProfileDto>.ErrorResponse(
                 "INTERNAL_ERROR", 
-                "An error occurred while retrieving hospital profile", 
+                new List<string> { "An error occurred while retrieving hospital profile" }, 
                 correlationId));
         }
     }
@@ -63,7 +63,7 @@ public class HospitalsController : ControllerBase
     /// </summary>
     [HttpGet("{hospitalId}/doctors")]
     [AllowAnonymous]
-    public async Task<ActionResult<ApiResponse<PagedResult<DoctorSummaryDto>>>> GetHospitalDoctors(
+    public async Task<ActionResult<ApiResponse<MedTravel.Shared.Models.PagedResult<DoctorSummaryDto>>>> GetHospitalDoctors(
         Guid hospitalId,
         [FromQuery] string? specialty = null,
         [FromQuery] int page = 1,
@@ -79,7 +79,7 @@ public class HospitalsController : ControllerBase
             var doctors = await _hospitalService.GetHospitalDoctorsAsync(
                 hospitalId, specialty, page, pageSize);
 
-            return Ok(ApiResponse<PagedResult<DoctorSummaryDto>>.SuccessResponse(
+            return Ok(ApiResponse<MedTravel.Shared.Models.PagedResult<DoctorSummaryDto>>.SuccessResponse(
                 doctors, 
                 "Hospital doctors retrieved successfully", 
                 correlationId));
@@ -87,9 +87,9 @@ public class HospitalsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving doctors for hospital ID {HospitalId}", hospitalId);
-            return StatusCode(500, ApiResponse<PagedResult<DoctorSummaryDto>>.ErrorResponse(
+            return StatusCode(500, ApiResponse<MedTravel.Shared.Models.PagedResult<DoctorSummaryDto>>.ErrorResponse(
                 "INTERNAL_ERROR", 
-                "An error occurred while retrieving hospital doctors", 
+                new List<string> { "An error occurred while retrieving hospital doctors" }, 
                 correlationId));
         }
     }
@@ -99,7 +99,7 @@ public class HospitalsController : ControllerBase
     /// </summary>
     [HttpGet("city/{cityId}")]
     [AllowAnonymous]
-    public async Task<ActionResult<ApiResponse<PagedResult<HospitalSummaryDto>>>> GetHospitalsByCity(
+    public async Task<ActionResult<ApiResponse<MedTravel.Shared.Models.PagedResult<HospitalSummaryDto>>>> GetHospitalsByCity(
         Guid cityId,
         [FromQuery] string? specialty = null,
         [FromQuery] int page = 1,
@@ -115,7 +115,7 @@ public class HospitalsController : ControllerBase
             var hospitals = await _hospitalService.GetHospitalsByCityAsync(
                 cityId, specialty, page, pageSize);
 
-            return Ok(ApiResponse<PagedResult<HospitalSummaryDto>>.SuccessResponse(
+            return Ok(ApiResponse<MedTravel.Shared.Models.PagedResult<HospitalSummaryDto>>.SuccessResponse(
                 hospitals, 
                 "City hospitals retrieved successfully", 
                 correlationId));
@@ -123,9 +123,9 @@ public class HospitalsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving hospitals for city ID {CityId}", cityId);
-            return StatusCode(500, ApiResponse<PagedResult<HospitalSummaryDto>>.ErrorResponse(
+            return StatusCode(500, ApiResponse<MedTravel.Shared.Models.PagedResult<HospitalSummaryDto>>.ErrorResponse(
                 "INTERNAL_ERROR", 
-                "An error occurred while retrieving city hospitals", 
+                new List<string> { "An error occurred while retrieving city hospitals" }, 
                 correlationId));
         }
     }
@@ -135,7 +135,7 @@ public class HospitalsController : ControllerBase
     /// </summary>
     [HttpGet("specialty/{specialty}")]
     [AllowAnonymous]
-    public async Task<ActionResult<ApiResponse<PagedResult<HospitalSummaryDto>>>> GetHospitalsBySpecialty(
+    public async Task<ActionResult<ApiResponse<MedTravel.Shared.Models.PagedResult<HospitalSummaryDto>>>> GetHospitalsBySpecialty(
         string specialty,
         [FromQuery] string? city = null,
         [FromQuery] int page = 1,
@@ -151,7 +151,7 @@ public class HospitalsController : ControllerBase
             var hospitals = await _hospitalService.GetHospitalsBySpecialtyAsync(
                 specialty, city, page, pageSize);
 
-            return Ok(ApiResponse<PagedResult<HospitalSummaryDto>>.SuccessResponse(
+            return Ok(ApiResponse<MedTravel.Shared.Models.PagedResult<HospitalSummaryDto>>.SuccessResponse(
                 hospitals, 
                 "Specialty hospitals retrieved successfully", 
                 correlationId));
@@ -159,9 +159,9 @@ public class HospitalsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving hospitals for specialty {Specialty}", specialty);
-            return StatusCode(500, ApiResponse<PagedResult<HospitalSummaryDto>>.ErrorResponse(
+            return StatusCode(500, ApiResponse<MedTravel.Shared.Models.PagedResult<HospitalSummaryDto>>.ErrorResponse(
                 "INTERNAL_ERROR", 
-                "An error occurred while retrieving specialty hospitals", 
+                new List<string> { "An error occurred while retrieving specialty hospitals" }, 
                 correlationId));
         }
     }
@@ -171,7 +171,7 @@ public class HospitalsController : ControllerBase
     /// </summary>
     [HttpGet("{hospitalId}/reviews")]
     [AllowAnonymous]
-    public async Task<ActionResult<ApiResponse<PagedResult<ReviewDto>>>> GetHospitalReviews(
+    public async Task<ActionResult<ApiResponse<MedTravel.Shared.Models.PagedResult<ReviewDto>>>> GetHospitalReviews(
         Guid hospitalId,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20)
@@ -186,7 +186,7 @@ public class HospitalsController : ControllerBase
             var reviews = await _hospitalService.GetHospitalReviewsAsync(
                 hospitalId, page, pageSize);
 
-            return Ok(ApiResponse<PagedResult<ReviewDto>>.SuccessResponse(
+            return Ok(ApiResponse<MedTravel.Shared.Models.PagedResult<ReviewDto>>.SuccessResponse(
                 reviews, 
                 "Hospital reviews retrieved successfully", 
                 correlationId));
@@ -194,9 +194,9 @@ public class HospitalsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving reviews for hospital ID {HospitalId}", hospitalId);
-            return StatusCode(500, ApiResponse<PagedResult<ReviewDto>>.ErrorResponse(
+            return StatusCode(500, ApiResponse<MedTravel.Shared.Models.PagedResult<ReviewDto>>.ErrorResponse(
                 "INTERNAL_ERROR", 
-                "An error occurred while retrieving hospital reviews", 
+                new List<string> { "An error occurred while retrieving hospital reviews" }, 
                 correlationId));
         }
     }

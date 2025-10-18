@@ -70,23 +70,24 @@ public class DoctorsController : ControllerBase
     /// </summary>
     [HttpGet("{id}/reviews")]
     [AllowAnonymous]
-    public async Task<ActionResult<ApiResponse<PagedResult<ReviewDto>>>> GetReviews(
+    public async Task<ActionResult<ApiResponse<MedTravel.Shared.Models.PagedResult<ReviewDto>>>> GetReviews(
         Guid id, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 20)
     {
         var correlationId = HttpContext.Items["CorrelationId"]?.ToString();
         var reviews = await _reviewRepository.GetByEntityAsync("doctor", id, pageNumber, pageSize);
 
-        var result = new PagedResult<ReviewDto>
+        var result = new MedTravel.Shared.Models.PagedResult<ReviewDto>
         {
             Items = reviews.Select(r => new ReviewDto(
-                r.Id, "doctor", id, r.UserId, r.Rating, r.Comment, r.IsVerified, r.CreatedAt
+                r.Id, r.HospitalId, r.DoctorId, r.PatientId, r.Rating, r.Title, r.Comment, 
+                r.TreatmentDate, r.IsVerified, r.IsApproved, r.CreatedAt
             )).ToList(),
             PageNumber = pageNumber,
             PageSize = pageSize,
             TotalCount = reviews.Count()
         };
 
-        return Ok(ApiResponse<PagedResult<ReviewDto>>.SuccessResponse(result, null, correlationId));
+        return Ok(ApiResponse<MedTravel.Shared.Models.PagedResult<ReviewDto>>.SuccessResponse(result, null, correlationId));
     }
 
     /// <summary>
@@ -103,26 +104,29 @@ public class DoctorsController : ControllerBase
         {
             Id = Guid.NewGuid(),
             DoctorId = id,
-            UserId = userId,
+            PatientId = userId,
             Rating = request.Rating,
+            Title = request.Title,
             Comment = request.Comment,
             IsVerified = false
         };
 
         var created = await _reviewRepository.CreateAsync(review);
-        var dto = new ReviewDto(created.Id, "doctor", id, userId, created.Rating, created.Comment, created.IsVerified, created.CreatedAt);
+        var dto = new ReviewDto(created.Id, created.HospitalId, created.DoctorId, created.PatientId, 
+            created.Rating, created.Title, created.Comment, created.TreatmentDate, 
+            created.IsVerified, created.IsApproved, created.CreatedAt);
 
         return Ok(ApiResponse<ReviewDto>.SuccessResponse(dto, "Review added successfully", correlationId));
     }
 
     private static DoctorDto MapDoctorToDto(Core.Entities.Doctor d) => new(
         d.Id, d.HospitalId, d.Hospital?.Name ?? "", d.FirstName, d.LastName,
-        d.Email, d.Phone, d.Qualification, d.YearsOfExperience, d.Biography,
-        d.ProfileImageUrl, d.ConsultationFee, d.AverageRating, d.TotalReviews,
-        d.Specialties.Select(s => s.Specialty.Name).ToList(),
-        d.Languages.Select(l => l.Language.Name).ToList(),
+        d.Email, d.Phone ?? "", d.Qualification ?? "", d.YearsOfExperience ?? 0, d.Biography ?? "",
+        d.ProfileImageUrl ?? "", d.ConsultationFee ?? 0, d.AverageRating, d.TotalReviews,
+        d.Specialties.Select(s => s.Name).ToList(),
+        d.Languages.Select(l => l.Name).ToList(),
         d.Credentials.Select(c => new CredentialDto(
-            c.Type, c.Name, c.IssuingOrganization, c.IssueDate, c.ExpiryDate, c.IsVerified
+            c.Type, c.Name, c.IssuingOrganization ?? "", c.IssueDate ?? DateTime.MinValue, c.ExpiryDate, c.IsVerified ?? false
         )).ToList()
     );
 }

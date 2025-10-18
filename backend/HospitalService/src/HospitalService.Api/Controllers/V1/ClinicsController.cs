@@ -14,7 +14,7 @@ public class ClinicsController : ControllerBase
     /// </summary>
     [HttpGet]
     [AllowAnonymous]
-    public async Task<ActionResult<ApiResponse<PagedResult<object>>>> GetClinics(
+    public async Task<ActionResult<ApiResponse<MedTravel.Shared.Models.PagedResult<object>>>> GetClinics(
         [FromQuery] string? city = null,
         [FromQuery] string? specialty = null,
         [FromQuery] int pageNumber = 1,
@@ -38,7 +38,7 @@ public class ClinicsController : ControllerBase
             }
         };
 
-        var result = new PagedResult<object>
+        var result = new MedTravel.Shared.Models.PagedResult<object>
         {
             Items = clinics,
             TotalCount = clinics.Count,
@@ -46,7 +46,7 @@ public class ClinicsController : ControllerBase
             PageSize = pageSize
         };
 
-        return Ok(ApiResponse<PagedResult<object>>.SuccessResponse(result, null, correlationId));
+        return Ok(ApiResponse<MedTravel.Shared.Models.PagedResult<object>>.SuccessResponse(result, null, correlationId));
     }
 
     /// <summary>

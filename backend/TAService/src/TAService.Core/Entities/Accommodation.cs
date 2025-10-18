@@ -6,18 +6,26 @@ public class Hotel
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string Address { get; set; } = string.Empty;
-    public string City { get; set; } = string.Empty;
-    public string Country { get; set; } = string.Empty;
-    public decimal Latitude { get; set; }
-    public decimal Longitude { get; set; }
-    public decimal StarRating { get; set; }
-    public decimal AverageRating { get; set; }
-    public int TotalReviews { get; set; }
+    public Guid CityId { get; set; }
+    public Guid CountryId { get; set; }
+    public string PostalCode { get; set; } = string.Empty;
+    public decimal? Latitude { get; set; }
+    public decimal? Longitude { get; set; }
     public string Phone { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
-    public List<string> Amenities { get; set; } = new();
-    public decimal DistanceToHospitalKm { get; set; }
-    public Guid? NearbyHospitalId { get; set; }
+    public string Website { get; set; } = string.Empty;
+    public int? StarRating { get; set; }
+    public decimal AverageRating { get; set; }
+    public int TotalReviews { get; set; }
+    public bool IsActive { get; set; } = true;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? UpdatedAt { get; set; }
+    
+    // Navigation properties
+    public City City { get; set; } = null!;
+    public Country Country { get; set; } = null!;
+    public ICollection<HotelRoom> Rooms { get; set; } = new List<HotelRoom>();
+    public ICollection<AccommodationBooking> Bookings { get; set; } = new List<AccommodationBooking>();
 }
 
 public class HotelRoom
@@ -27,10 +35,18 @@ public class HotelRoom
     public string RoomType { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public decimal PricePerNight { get; set; }
-    public string Currency { get; set; } = "USD";
-    public int MaxOccupancy { get; set; }
-    public int AvailableRooms { get; set; }
-    public List<string> Amenities { get; set; } = new();
+    public Guid CurrencyId { get; set; }
+    public int? MaxOccupancy { get; set; }
+    public int? TotalRooms { get; set; }
+    public int? AvailableRooms { get; set; }
+    public string? Amenities { get; set; } // JSON string
+    public string? Images { get; set; } // JSON string
+    public bool IsActive { get; set; } = true;
+    
+    // Navigation properties
+    public Hotel Hotel { get; set; } = null!;
+    public Currency Currency { get; set; } = null!;
+    public ICollection<AccommodationBooking> Bookings { get; set; } = new List<AccommodationBooking>();
 }
 
 public class AccommodationBooking
@@ -42,17 +58,24 @@ public class AccommodationBooking
     public DateTime CheckInDate { get; set; }
     public DateTime CheckOutDate { get; set; }
     public int NumberOfGuests { get; set; }
-    public int NumberOfRooms { get; set; }
+    public int NumberOfRooms { get; set; } = 1;
     public decimal TotalPrice { get; set; }
-    public string Currency { get; set; } = "USD";
+    public Guid CurrencyId { get; set; }
     public string Status { get; set; } = "pending";
-    public string GuestName { get; set; } = string.Empty;
-    public string GuestEmail { get; set; } = string.Empty;
-    public string GuestPhone { get; set; } = string.Empty;
-    public string BookingReference { get; set; } = string.Empty;
-    public string SpecialRequests { get; set; } = string.Empty;
+    public string? BookingReference { get; set; }
+    public string? GuestName { get; set; }
+    public string? GuestEmail { get; set; }
+    public string? GuestPhone { get; set; }
+    public string? SpecialRequests { get; set; }
+    public string? PaymentId { get; set; }
+    public bool IsPaid { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime? CancelledAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+    
+    // Navigation properties
+    public Hotel Hotel { get; set; } = null!;
+    public HotelRoom Room { get; set; } = null!;
+    public Currency Currency { get; set; } = null!;
 }
 
 public class CostBreakdown

@@ -61,6 +61,11 @@ builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 builder.Services.AddScoped<ISpecialtyRepository, SpecialtyRepository>();
+builder.Services.AddScoped<ISelectionFlowRepository, SelectionFlowRepository>();
+
+// Add services
+builder.Services.AddScoped<IHospitalService, HospitalService.Infrastructure.Services.HospitalService>();
+// builder.Services.AddScoped<ISelectionFlowService, SelectionFlowService>(); // Temporarily disabled due to build errors
 
 // Add high-performance search service (Singleton for better caching)
 builder.Services.AddSingleton<IFastSearchService, FastSearchService>();

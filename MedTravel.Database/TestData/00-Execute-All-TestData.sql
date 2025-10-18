@@ -38,6 +38,18 @@ PRINT 'Step 9: Inserting 500 Messages...';
 PRINT 'Step 10: Inserting 50 Hotels...';
 :r "09-Insert-Hotels-50.sql"
 
+PRINT 'Step 11: Inserting 50 Common Diseases...';
+:r "11-Insert-Diseases-50.sql"
+
+PRINT 'Step 12: Inserting Doctor-Disease Relationships...';
+:r "12-Insert-DoctorDiseases-300.sql"
+
+PRINT 'Step 13: Inserting Doctor Availability Data...';
+:r "13-Insert-DoctorAvailability-150.sql"
+
+PRINT 'Step 14: Inserting Doctor Languages Data...';
+:r "14-Insert-DoctorLanguages-200.sql"
+
 PRINT '';
 PRINT '========================================';
 PRINT 'TEST DATA INSERTION COMPLETE!';
@@ -54,9 +66,13 @@ PRINT '  ✓ 100 Message Threads';
 PRINT '  ✓ 500 Messages in threads';
 PRINT '  ✓ 50 Hotels in Hyderabad';
 PRINT '  ✓ User roles and preferences';
+PRINT '  ✓ 50 Common Diseases';
+PRINT '  ✓ 300+ Doctor-Disease Relationships';
+PRINT '  ✓ 150 Doctor Availability Records';
+PRINT '  ✓ 200+ Doctor-Language Relationships';
 PRINT '';
 PRINT 'All data uses proper foreign keys from metadata tables.';
-PRINT 'Ready for comprehensive testing!';
+PRINT 'Ready for comprehensive testing including search-to-selection workflows!';
 PRINT '';
 
 -- Display summary statistics
@@ -77,6 +93,16 @@ SELECT 'Messages', COUNT(*) FROM Messaging.Messages
 UNION ALL
 SELECT 'Hotels', COUNT(*) FROM TAService.Hotels
 UNION ALL
-SELECT 'Specialties', COUNT(*) FROM Metadata.Specialties;
+SELECT 'Specialties', COUNT(*) FROM Metadata.Specialties
+UNION ALL
+SELECT 'Diseases', COUNT(*) FROM Metadata.Diseases
+UNION ALL
+SELECT 'Doctor-Disease Relationships', COUNT(*) FROM Hospital.DoctorDiseases
+UNION ALL
+SELECT 'Doctor Availability Records', COUNT(*) FROM Hospital.DoctorAvailability
+UNION ALL
+SELECT 'Doctor-Language Relationships', COUNT(*) FROM Hospital.DoctorLanguages
+UNION ALL
+SELECT 'Languages', COUNT(*) FROM Metadata.Languages;
 
 GO

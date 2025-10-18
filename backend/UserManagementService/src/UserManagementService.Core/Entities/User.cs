@@ -12,8 +12,8 @@ public class User
     public string Gender { get; set; } = string.Empty;
     public string Nationality { get; set; } = string.Empty;
     public string PassportNumber { get; set; } = string.Empty;
-    public string Country { get; set; } = string.Empty;
-    public string City { get; set; } = string.Empty;
+    public Guid? CountryId { get; set; }
+    public Guid? CityId { get; set; }
     public string Address { get; set; } = string.Empty;
     public string PostalCode { get; set; } = string.Empty;
     public bool IsActive { get; set; } = true;
@@ -25,12 +25,15 @@ public class User
     public DateTime? LastLoginAt { get; set; }
 
     // Navigation properties
+    public Country? Country { get; set; }
+    public City? City { get; set; }
     public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
-    public ICollection<UserPreference> UserPreferences { get; set; } = new List<UserPreference>();
+    public UserPreference? UserPreference { get; set; }
     public ICollection<UserDocument> UserDocuments { get; set; } = new List<UserDocument>();
     public ICollection<InsurancePolicy> InsurancePolicies { get; set; } = new List<InsurancePolicy>();
     public ICollection<Session> Sessions { get; set; } = new List<Session>();
     public ICollection<AuditLog> AuditLogs { get; set; } = new List<AuditLog>();
+    public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 }
 
 public class Role
@@ -95,32 +98,36 @@ public class UserPreference
 {
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
-    public string PreferredLanguage { get; set; } = "en";
-    public string PreferredCurrency { get; set; } = "USD";
+    public Guid? LanguageId { get; set; }
+    public Guid? CurrencyId { get; set; }
     public bool EmailNotifications { get; set; } = true;
     public bool SmsNotifications { get; set; } = true;
     public bool PushNotifications { get; set; } = true;
-    public string TimeZone { get; set; } = "UTC";
+    public string Theme { get; set; } = "light";
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
 
     public User User { get; set; } = null!;
+    public Language? Language { get; set; }
+    public Currency? Currency { get; set; }
 }
 
 public class UserDocument
 {
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
-    public string DocumentType { get; set; } = string.Empty; // passport, visa, medical_records, insurance_card
+    public Guid DocumentTypeId { get; set; }
     public string DocumentName { get; set; } = string.Empty;
     public string DocumentUrl { get; set; } = string.Empty;
-    public string ContentType { get; set; } = string.Empty;
-    public long FileSize { get; set; }
+    public long? FileSize { get; set; }
+    public string? MimeType { get; set; }
     public bool IsVerified { get; set; }
-    public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
+    public Guid? VerifiedBy { get; set; }
     public DateTime? VerifiedAt { get; set; }
+    public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
 
     public User User { get; set; } = null!;
+    public DocumentType DocumentType { get; set; } = null!;
 }
 
 public class InsurancePolicy
@@ -155,3 +162,4 @@ public class AuditLog
 
     public User? User { get; set; }
 }
+

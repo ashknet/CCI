@@ -3,6 +3,7 @@ import Layout from './components/Layout'
 import HomePage from './pages/HomePage'
 import SearchResultsPage from './pages/SearchResultsPage'
 import DoctorProfilePage from './pages/DoctorProfilePage'
+import HospitalProfilePage from './pages/HospitalProfilePage'
 import AppointmentBookingPage from './pages/AppointmentBookingPage'
 import TravelBookingPage from './pages/TravelBookingPage'
 import AccommodationPage from './pages/AccommodationPage'
@@ -23,6 +24,7 @@ function App() {
         <Route index element={<HomePage />} />
         <Route path="search" element={<SearchResultsPage />} />
         <Route path="doctor/:id" element={<DoctorProfilePage />} />
+        <Route path="hospital/:id" element={<HospitalProfilePage />} />
         <Route path="appointment/book" element={<AppointmentBookingPage />} />
         <Route path="travel" element={<TravelBookingPage />} />
         <Route path="accommodation" element={<AccommodationPage />} />

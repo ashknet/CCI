@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using HospitalService.Core.DTOs;
 using HospitalService.Core.Interfaces;
-using HospitalService.Core.Models;
+using MedTravel.Shared.Models;
 
 namespace HospitalService.Api.Controllers.V1;
 
@@ -48,7 +48,7 @@ public class DiseasesController : ControllerBase
             {
                 return NotFound(ApiResponse<DiseaseDoctorsDto>.ErrorResponse(
                     "DISEASE_NOT_FOUND", 
-                    $"Disease with ID {diseaseId} not found", 
+                    new List<string> { $"Disease with ID {diseaseId} not found" }, 
                     correlationId));
             }
 
@@ -62,7 +62,7 @@ public class DiseasesController : ControllerBase
             _logger.LogError(ex, "Error retrieving doctors for disease ID {DiseaseId}", diseaseId);
             return StatusCode(500, ApiResponse<DiseaseDoctorsDto>.ErrorResponse(
                 "INTERNAL_ERROR", 
-                "An error occurred while retrieving disease doctors", 
+                new List<string> { "An error occurred while retrieving disease doctors" }, 
                 correlationId));
         }
     }
@@ -72,7 +72,7 @@ public class DiseasesController : ControllerBase
     /// </summary>
     [HttpGet]
     [AllowAnonymous]
-    public async Task<ActionResult<ApiResponse<PagedResult<DiseaseDto>>>> GetDiseases(
+    public async Task<ActionResult<ApiResponse<MedTravel.Shared.Models.PagedResult<DiseaseDto>>>> GetDiseases(
         [FromQuery] string? category = null,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 50)
@@ -86,7 +86,7 @@ public class DiseasesController : ControllerBase
 
             var diseases = await _diseaseService.GetDiseasesAsync(category, page, pageSize);
 
-            return Ok(ApiResponse<PagedResult<DiseaseDto>>.SuccessResponse(
+            return Ok(ApiResponse<MedTravel.Shared.Models.PagedResult<DiseaseDto>>.SuccessResponse(
                 diseases, 
                 "Diseases retrieved successfully", 
                 correlationId));
@@ -94,9 +94,9 @@ public class DiseasesController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving diseases");
-            return StatusCode(500, ApiResponse<PagedResult<DiseaseDto>>.ErrorResponse(
+            return StatusCode(500, ApiResponse<MedTravel.Shared.Models.PagedResult<DiseaseDto>>.ErrorResponse(
                 "INTERNAL_ERROR", 
-                "An error occurred while retrieving diseases", 
+                new List<string> { "An error occurred while retrieving diseases" }, 
                 correlationId));
         }
     }
@@ -117,7 +117,7 @@ public class DiseasesController : ControllerBase
             {
                 return NotFound(ApiResponse<DiseaseDto>.ErrorResponse(
                     "DISEASE_NOT_FOUND", 
-                    $"Disease with ID {diseaseId} not found", 
+                    new List<string> { $"Disease with ID {diseaseId} not found" }, 
                     correlationId));
             }
 
@@ -131,7 +131,7 @@ public class DiseasesController : ControllerBase
             _logger.LogError(ex, "Error retrieving disease ID {DiseaseId}", diseaseId);
             return StatusCode(500, ApiResponse<DiseaseDto>.ErrorResponse(
                 "INTERNAL_ERROR", 
-                "An error occurred while retrieving disease", 
+                new List<string> { "An error occurred while retrieving disease" }, 
                 correlationId));
         }
     }
@@ -141,7 +141,7 @@ public class DiseasesController : ControllerBase
     /// </summary>
     [HttpGet("category/{category}")]
     [AllowAnonymous]
-    public async Task<ActionResult<ApiResponse<PagedResult<DiseaseDto>>>> GetDiseasesByCategory(
+    public async Task<ActionResult<ApiResponse<MedTravel.Shared.Models.PagedResult<DiseaseDto>>>> GetDiseasesByCategory(
         string category,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 50)
@@ -156,7 +156,7 @@ public class DiseasesController : ControllerBase
             var diseases = await _diseaseService.GetDiseasesByCategoryAsync(
                 category, page, pageSize);
 
-            return Ok(ApiResponse<PagedResult<DiseaseDto>>.SuccessResponse(
+            return Ok(ApiResponse<MedTravel.Shared.Models.PagedResult<DiseaseDto>>.SuccessResponse(
                 diseases, 
                 "Category diseases retrieved successfully", 
                 correlationId));
@@ -164,9 +164,9 @@ public class DiseasesController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving diseases for category {Category}", category);
-            return StatusCode(500, ApiResponse<PagedResult<DiseaseDto>>.ErrorResponse(
+            return StatusCode(500, ApiResponse<MedTravel.Shared.Models.PagedResult<DiseaseDto>>.ErrorResponse(
                 "INTERNAL_ERROR", 
-                "An error occurred while retrieving category diseases", 
+                new List<string> { "An error occurred while retrieving category diseases" }, 
                 correlationId));
         }
     }

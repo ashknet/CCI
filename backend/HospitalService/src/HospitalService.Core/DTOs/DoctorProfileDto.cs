@@ -31,6 +31,19 @@ public class HospitalSummaryDto
     public string Address { get; set; } = string.Empty;
     public string City { get; set; } = string.Empty;
     public string Phone { get; set; } = string.Empty;
+    public decimal AverageRating { get; set; }
+    public int TotalReviews { get; set; }
+    public int BedCapacity { get; set; }
+    public List<SpecialtyDto> Specialties { get; set; } = new();
+    public decimal? DistanceFromCityCenter { get; set; }
+}
+
+public class SpecialtyDto
+{
+    public Guid Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string Category { get; set; } = string.Empty;
 }
 
 public class DoctorSpecialtyDto
@@ -49,22 +62,25 @@ public class LanguageDto
     public string Code { get; set; } = string.Empty;
 }
 
-public class CredentialDto
-{
-    public string Type { get; set; } = string.Empty;
-    public string Name { get; set; } = string.Empty;
-    public string IssuingOrganization { get; set; } = string.Empty;
-    public DateTime IssueDate { get; set; }
-    public DateTime? ExpiryDate { get; set; }
-    public bool IsVerified { get; set; }
-}
+public record CredentialDto(
+    string Type,
+    string Name,
+    string IssuingOrganization,
+    DateTime IssueDate,
+    DateTime? ExpiryDate,
+    bool IsVerified
+);
 
-public class ReviewDto
-{
-    public Guid Id { get; set; }
-    public int Rating { get; set; }
-    public string Comment { get; set; } = string.Empty;
-    public string PatientName { get; set; } = string.Empty;
-    public DateTime? TreatmentDate { get; set; }
-    public DateTime CreatedAt { get; set; }
-}
+public record ReviewDto(
+    Guid Id,
+    Guid? HospitalId,
+    Guid? DoctorId,
+    Guid PatientId,
+    int Rating,
+    string? Title,
+    string? Comment,
+    DateTime? TreatmentDate,
+    bool? IsVerified,
+    bool? IsApproved,
+    DateTime CreatedAt
+);

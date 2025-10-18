@@ -63,8 +63,9 @@ public class UsersController : ControllerBase
         if (!string.IsNullOrEmpty(request.FirstName)) user.FirstName = request.FirstName;
         if (!string.IsNullOrEmpty(request.LastName)) user.LastName = request.LastName;
         if (!string.IsNullOrEmpty(request.Phone)) user.Phone = request.Phone;
-        if (!string.IsNullOrEmpty(request.Country)) user.Country = request.Country;
-        if (!string.IsNullOrEmpty(request.City)) user.City = request.City;
+        // TODO: Handle Country and City updates - need to resolve by name/ID
+        // if (!string.IsNullOrEmpty(request.Country)) user.Country = await _countryRepository.GetByNameAsync(request.Country);
+        // if (!string.IsNullOrEmpty(request.City)) user.City = await _cityRepository.GetByNameAsync(request.City);
 
         user = await _userRepository.UpdateAsync(user);
         return Ok(ApiResponse<UserDto>.SuccessResponse(MapToDto(user), "User updated successfully", correlationId));
@@ -284,7 +285,7 @@ public class UsersController : ControllerBase
         var roles = user.UserRoles.Select(ur => ur.Role.Name).ToList();
         return new UserDto(
             user.Id, user.Email, user.FirstName, user.LastName, user.Phone,
-            user.DateOfBirth, user.Gender, user.Nationality, user.Country, user.City,
+            user.DateOfBirth, user.Gender, user.Nationality, user.Country?.Name ?? "", user.City?.Name ?? "",
             user.Address, user.PostalCode, user.PassportNumber, user.EmailVerified,
             user.PhoneVerified, user.TwoFactorEnabled, roles, user.CreatedAt, user.LastLoginAt
         );

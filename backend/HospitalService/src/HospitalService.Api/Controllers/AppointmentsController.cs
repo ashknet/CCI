@@ -66,14 +66,14 @@ public class AppointmentsController : ControllerBase
     }
 
     [HttpGet("my-appointments")]
-    public async Task<ActionResult<ApiResponse<PagedResult<AppointmentDto>>>> GetMyAppointments(
+    public async Task<ActionResult<ApiResponse<MedTravel.Shared.Models.PagedResult<AppointmentDto>>>> GetMyAppointments(
         [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 20)
     {
         var userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
         var correlationId = HttpContext.Items["CorrelationId"]?.ToString();
 
         var appointments = await _appointmentRepository.GetByPatientIdAsync(userId, pageNumber, pageSize);
-        var result = new PagedResult<AppointmentDto>
+        var result = new MedTravel.Shared.Models.PagedResult<AppointmentDto>
         {
             Items = appointments.Select(a => MapToDto(a, a.Doctor)).ToList(),
             PageNumber = pageNumber,
@@ -81,7 +81,7 @@ public class AppointmentsController : ControllerBase
             TotalCount = appointments.Count()
         };
 
-        return Ok(ApiResponse<PagedResult<AppointmentDto>>.SuccessResponse(result, null, correlationId));
+        return Ok(ApiResponse<MedTravel.Shared.Models.PagedResult<AppointmentDto>>.SuccessResponse(result, null, correlationId));
     }
 
     [HttpPatch("{id}/cancel")]
@@ -98,7 +98,8 @@ public class AppointmentsController : ControllerBase
 
     private static AppointmentDto MapToDto(Appointment a, Doctor d) => new(
         a.Id, a.DoctorId, $"Dr. {d.FirstName} {d.LastName}", a.PatientId,
-        a.ScheduledDate, a.ScheduledTime, a.DurationMinutes, a.Status,
-        a.ReasonForVisit, a.Fee, a.IsPaid
+        a.ScheduledDate, a.ScheduledTime, a.DurationMinutes, 
+        Enum.TryParse<AppointmentStatus>(a.Status, out var status) ? status : AppointmentStatus.Scheduled,
+        a.ReasonForVisit ?? "", a.Fee ?? 0, a.IsPaid
     );
 }

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using MedTravel.Shared.Models;
 
 namespace HospitalService.Core.DTOs;
 
@@ -27,13 +28,6 @@ public class HospitalProfileDto
     public List<ReviewDto> Reviews { get; set; } = new();
 }
 
-public class SpecialtyDto
-{
-    public Guid Id { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
-    public string Category { get; set; } = string.Empty;
-}
 
 public class DoctorSummaryDto
 {
@@ -53,7 +47,7 @@ public class DoctorSummaryDto
 public class CityHospitalsDto
 {
     public CityDto City { get; set; } = new();
-    public PagedResult<HospitalSummaryDto> Hospitals { get; set; } = new();
+    public MedTravel.Shared.Models.PagedResult<HospitalSummaryDto> Hospitals { get; set; } = new();
 }
 
 public class CityDto
@@ -64,23 +58,11 @@ public class CityDto
     public string Country { get; set; } = string.Empty;
 }
 
-public class HospitalSummaryDto
-{
-    public Guid Id { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public string Address { get; set; } = string.Empty;
-    public string Phone { get; set; } = string.Empty;
-    public decimal AverageRating { get; set; }
-    public int TotalReviews { get; set; }
-    public int BedCapacity { get; set; }
-    public List<SpecialtyDto> Specialties { get; set; } = new();
-    public decimal? DistanceFromCityCenter { get; set; }
-}
 
 public class DiseaseDoctorsDto
 {
     public DiseaseDto Disease { get; set; } = new();
-    public PagedResult<DoctorSummaryDto> Doctors { get; set; } = new();
+    public MedTravel.Shared.Models.PagedResult<DoctorSummaryDto> Doctors { get; set; } = new();
 }
 
 public class DiseaseDto

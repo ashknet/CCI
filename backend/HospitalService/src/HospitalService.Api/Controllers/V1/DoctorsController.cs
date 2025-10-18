@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using HospitalService.Core.DTOs;
 using HospitalService.Core.Interfaces;
-using HospitalService.Core.Models;
+using MedTravel.Shared.Models;
 
 namespace HospitalService.Api.Controllers.V1;
 
@@ -42,7 +42,7 @@ public class DoctorsController : ControllerBase
             {
                 return NotFound(ApiResponse<DoctorProfileDto>.ErrorResponse(
                     "DOCTOR_NOT_FOUND", 
-                    $"Doctor with ID {doctorId} not found", 
+                    new List<string> { $"Doctor with ID {doctorId} not found" }, 
                     correlationId));
             }
 
@@ -56,7 +56,7 @@ public class DoctorsController : ControllerBase
             _logger.LogError(ex, "Error retrieving doctor profile for ID {DoctorId}", doctorId);
             return StatusCode(500, ApiResponse<DoctorProfileDto>.ErrorResponse(
                 "INTERNAL_ERROR", 
-                "An error occurred while retrieving doctor profile", 
+                new List<string> { "An error occurred while retrieving doctor profile" }, 
                 correlationId));
         }
     }
@@ -83,7 +83,7 @@ public class DoctorsController : ControllerBase
             {
                 return BadRequest(ApiResponse<AppointmentAvailabilityDto>.ErrorResponse(
                     "INVALID_DATE_RANGE", 
-                    "Start date cannot be after end date", 
+                    new List<string> { "Start date cannot be after end date" }, 
                     correlationId));
             }
 
@@ -100,7 +100,7 @@ public class DoctorsController : ControllerBase
             _logger.LogError(ex, "Error retrieving doctor availability for ID {DoctorId}", doctorId);
             return StatusCode(500, ApiResponse<AppointmentAvailabilityDto>.ErrorResponse(
                 "INTERNAL_ERROR", 
-                "An error occurred while retrieving doctor availability", 
+                new List<string> { "An error occurred while retrieving doctor availability" }, 
                 correlationId));
         }
     }
@@ -121,7 +121,7 @@ public class DoctorsController : ControllerBase
             {
                 return BadRequest(ApiResponse<AppointmentDto>.ErrorResponse(
                     "VALIDATION_ERROR", 
-                    "Invalid request data", 
+                    new List<string> { "Invalid request data" }, 
                     correlationId));
             }
 
@@ -131,7 +131,7 @@ public class DoctorsController : ControllerBase
             {
                 return NotFound(ApiResponse<AppointmentDto>.ErrorResponse(
                     "DOCTOR_NOT_FOUND", 
-                    $"Doctor with ID {doctorId} not found", 
+                    new List<string> { $"Doctor with ID {doctorId} not found" }, 
                     correlationId));
             }
 
@@ -139,7 +139,7 @@ public class DoctorsController : ControllerBase
             {
                 return BadRequest(ApiResponse<AppointmentDto>.ErrorResponse(
                     "DOCTOR_NOT_ACCEPTING", 
-                    "Doctor is not currently accepting new patients", 
+                    new List<string> { "Doctor is not currently accepting new patients" }, 
                     correlationId));
             }
 
@@ -151,7 +151,7 @@ public class DoctorsController : ControllerBase
             {
                 return BadRequest(ApiResponse<AppointmentDto>.ErrorResponse(
                     "SLOT_NOT_AVAILABLE", 
-                    "The selected time slot is no longer available", 
+                    new List<string> { "The selected time slot is no longer available" }, 
                     correlationId));
             }
 
@@ -171,7 +171,7 @@ public class DoctorsController : ControllerBase
             _logger.LogError(ex, "Error booking appointment for doctor ID {DoctorId}", doctorId);
             return StatusCode(500, ApiResponse<AppointmentDto>.ErrorResponse(
                 "INTERNAL_ERROR", 
-                "An error occurred while booking appointment", 
+                new List<string> { "An error occurred while booking appointment" }, 
                 correlationId));
         }
     }
@@ -181,7 +181,7 @@ public class DoctorsController : ControllerBase
     /// </summary>
     [HttpGet("hospital/{hospitalId}")]
     [AllowAnonymous]
-    public async Task<ActionResult<ApiResponse<PagedResult<DoctorSummaryDto>>>> GetDoctorsByHospital(
+    public async Task<ActionResult<ApiResponse<MedTravel.Shared.Models.PagedResult<DoctorSummaryDto>>>> GetDoctorsByHospital(
         Guid hospitalId,
         [FromQuery] string? specialty = null,
         [FromQuery] int page = 1,
@@ -197,7 +197,7 @@ public class DoctorsController : ControllerBase
             var doctors = await _doctorService.GetDoctorsByHospitalAsync(
                 hospitalId, specialty, page, pageSize);
 
-            return Ok(ApiResponse<PagedResult<DoctorSummaryDto>>.SuccessResponse(
+            return Ok(ApiResponse<MedTravel.Shared.Models.PagedResult<DoctorSummaryDto>>.SuccessResponse(
                 doctors, 
                 "Doctors retrieved successfully", 
                 correlationId));
@@ -205,9 +205,9 @@ public class DoctorsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving doctors for hospital ID {HospitalId}", hospitalId);
-            return StatusCode(500, ApiResponse<PagedResult<DoctorSummaryDto>>.ErrorResponse(
+            return StatusCode(500, ApiResponse<MedTravel.Shared.Models.PagedResult<DoctorSummaryDto>>.ErrorResponse(
                 "INTERNAL_ERROR", 
-                "An error occurred while retrieving doctors", 
+                new List<string> { "An error occurred while retrieving doctors" }, 
                 correlationId));
         }
     }
@@ -217,7 +217,7 @@ public class DoctorsController : ControllerBase
     /// </summary>
     [HttpGet("specialty/{specialty}")]
     [AllowAnonymous]
-    public async Task<ActionResult<ApiResponse<PagedResult<DoctorSummaryDto>>>> GetDoctorsBySpecialty(
+    public async Task<ActionResult<ApiResponse<MedTravel.Shared.Models.PagedResult<DoctorSummaryDto>>>> GetDoctorsBySpecialty(
         string specialty,
         [FromQuery] string? city = null,
         [FromQuery] int page = 1,
@@ -233,7 +233,7 @@ public class DoctorsController : ControllerBase
             var doctors = await _doctorService.GetDoctorsBySpecialtyAsync(
                 specialty, city, page, pageSize);
 
-            return Ok(ApiResponse<PagedResult<DoctorSummaryDto>>.SuccessResponse(
+            return Ok(ApiResponse<MedTravel.Shared.Models.PagedResult<DoctorSummaryDto>>.SuccessResponse(
                 doctors, 
                 "Doctors retrieved successfully", 
                 correlationId));
@@ -241,9 +241,9 @@ public class DoctorsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving doctors for specialty {Specialty}", specialty);
-            return StatusCode(500, ApiResponse<PagedResult<DoctorSummaryDto>>.ErrorResponse(
+            return StatusCode(500, ApiResponse<MedTravel.Shared.Models.PagedResult<DoctorSummaryDto>>.ErrorResponse(
                 "INTERNAL_ERROR", 
-                "An error occurred while retrieving doctors", 
+                new List<string> { "An error occurred while retrieving doctors" }, 
                 correlationId));
         }
     }

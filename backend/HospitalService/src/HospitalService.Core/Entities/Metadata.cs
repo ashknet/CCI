@@ -1,0 +1,4 @@
+namespace HospitalService.Core.Entities;
+
+
+
