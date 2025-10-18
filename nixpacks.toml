@@ -1,0 +1,15 @@
+[phases.setup]
+nixPkgs = ["dotnet-sdk_8"]
+
+[phases.build]
+cmds = [
+    "cd backend/HospitalService/src/HospitalService.Api",
+    "dotnet restore",
+    "dotnet build --configuration Release"
+]
+
+[phases.start]
+cmd = "cd backend/HospitalService/src/HospitalService.Api && dotnet run --configuration Release --urls http://0.0.0.0:$PORT"
+
+[variables]
+ASPNETCORE_ENVIRONMENT = "Production"
