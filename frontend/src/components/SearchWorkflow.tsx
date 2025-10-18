@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../store';
+import { RootState } from '../store/store';
 import { fetchSuggestions } from '../store/slices/searchSlice';
 import { selectionFlowService } from '../services/selectionFlowService';
 import { 
