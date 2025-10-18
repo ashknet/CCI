@@ -2,7 +2,7 @@
 builder = "NIXPACKS"
 
 [deploy]
-startCommand = "cd backend/HospitalService/src/HospitalService.Api && dotnet run"
+startCommand = "cd backend/HospitalService/src/HospitalService.Api && dotnet run --urls http://0.0.0.0:$PORT"
 healthcheckPath = "/health"
 healthcheckTimeout = 100
 restartPolicyType = "ON_FAILURE"
